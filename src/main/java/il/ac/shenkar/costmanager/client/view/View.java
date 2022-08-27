@@ -312,9 +312,22 @@ public class View implements IView {
 
         // handling events
         addButton.addActionListener(e -> {
-            cards.show(screen, "AddCategory");
-            topPanels.show(panelTop, "TopLogout");
-            rightPanels.show(panelRight, "RightAuthorized");
+
+            // do nothing if the name field is empty
+            String newCategoryName = nameField.getText();
+            if (newCategoryName.isBlank() || newCategoryName.isEmpty()) {
+                return;
+            }
+
+            // add the new category
+            Category category = new Category(null, "91966493-d06c-4593-bdb2-0fb1a084b6f8", newCategoryName);
+            nameField.setText("");
+            categoriesBox.removeAllItems();
+            vm.addCategory(category);
+
+//            cards.show(screen, "AddCategory");
+//            topPanels.show(panelTop, "TopLogout");
+//            rightPanels.show(panelRight, "RightAuthorized");
         });
     }
 
@@ -486,14 +499,14 @@ public class View implements IView {
     @Override
     public void setCategories(List<Category> categories) {
 
+        StringBuffer stringBuffer = new StringBuffer();
         for (var category : categories) {
-            JLabel categoryName = new JLabel(category.getName());
-            categoryName.setPreferredSize(new Dimension(70, 30));
-            categoriesList.add(categoryName);
+            stringBuffer.append(category.getName());
+            stringBuffer.append("\t");
 
             categoriesBox.addItem(category.getName());
         }
-
+        categoriesList.setText(stringBuffer.toString());
         categoriesBox.setSelectedIndex(0);
     }
 

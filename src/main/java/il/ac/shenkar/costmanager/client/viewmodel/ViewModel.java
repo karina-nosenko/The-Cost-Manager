@@ -77,6 +77,19 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
+    public void addCategory(Category category) {
+        service.submit(() -> {
+            try {
+                categoryModel.add(category);
+            } catch (CostManagerException e) {
+                throw new RuntimeException(e);
+            }
+
+            getCategories();
+        });
+    }
+
+    @Override
     public void setView(IView view) {
         this.view = view;
     }

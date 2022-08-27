@@ -9,7 +9,6 @@ import il.ac.shenkar.costmanager.client.view.IView;
 import il.ac.shenkar.costmanager.client.view.View;
 import il.ac.shenkar.costmanager.client.viewmodel.IViewModel;
 import il.ac.shenkar.costmanager.client.viewmodel.ViewModel;
-import il.ac.shenkar.costmanager.entities.Category;
 
 import javax.swing.*;
 
