@@ -1,4 +1,4 @@
-package il.ac.shenkar.costmanager.client.model;
+package il.ac.shenkar.costmanager.client.models;
 
 import il.ac.shenkar.costmanager.CostManagerException;
 import il.ac.shenkar.costmanager.entities.Cost;

@@ -1,13 +1,13 @@
-package il.ac.shenkar.costmanager.server.model;
+package il.ac.shenkar.costmanager.client.models;
 
 import il.ac.shenkar.costmanager.CostManagerException;
-import il.ac.shenkar.costmanager.entities.Currency;
+import il.ac.shenkar.costmanager.entities.User;
 
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CurrencyModel implements IModel<Currency> {
+public class UserModel implements IModel<User> {
 
     private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) {
         if(connection!=null) {
@@ -33,28 +33,28 @@ public class CurrencyModel implements IModel<Currency> {
         }
     }
 
-    public CurrencyModel() throws ClassNotFoundException {
+    public UserModel() throws ClassNotFoundException {
         Class.forName(driver);
     }
 
     @Override
-    public List<Currency> getAll() throws CostManagerException {
+    public List<User> getAll() throws CostManagerException {
 
         Connection connection = null;
         ResultSet rs = null;
         PreparedStatement statement = null;
-        List<Currency> resultList = new LinkedList<>();
+        List<User> resultList = new LinkedList<>();
 
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("SELECT currencyId, name, rate FROM currencies");
+            statement = connection.prepareStatement("SELECT userId, username, email, password FROM users");
 
             rs = statement.executeQuery();
 
             while(rs.next())
             {
-                resultList.add(new Currency(rs.getString("currencyId"),rs.getString("name"),rs.getDouble("rate")));
+                resultList.add(new User(rs.getString("userId"),rs.getString("username"),rs.getString("email"),rs.getString("password")));
             }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
@@ -67,16 +67,16 @@ public class CurrencyModel implements IModel<Currency> {
     }
 
     @Override
-    public Currency getById(String id) throws CostManagerException {
+    public User getById(String id) throws CostManagerException {
         Connection connection = null;
         ResultSet rs = null;
         PreparedStatement statement = null;
-        List<Currency> resultList = new LinkedList<>();
+        List<User> resultList = new LinkedList<>();
 
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("SELECT currencyId, name, rate FROM currencies WHERE currencyId = ?");
+            statement = connection.prepareStatement("SELECT userId, username, email, password FROM users WHERE userId = ?");
 
             statement.setString(1, id);
 
@@ -84,7 +84,7 @@ public class CurrencyModel implements IModel<Currency> {
 
             while(rs.next())
             {
-                resultList.add(new Currency(rs.getString("currencyId"),rs.getString("name"),rs.getDouble("rate")));
+                resultList.add(new User(rs.getString("userId"),rs.getString("username"),rs.getString("email"),rs.getString("password")));
             }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
@@ -93,11 +93,11 @@ public class CurrencyModel implements IModel<Currency> {
             closeConnections(connection, rs, statement);
         }
 
-        return resultList.size() > 0 ? resultList.get(0) : new Currency();
+        return resultList.size() > 0 ? resultList.get(0) : new User();
     }
 
     @Override
-    public void add(Currency obj) throws CostManagerException {
+    public void add(User obj) throws CostManagerException {
         Connection connection = null;
         ResultSet rs = null;
         PreparedStatement statement = null;
@@ -105,11 +105,12 @@ public class CurrencyModel implements IModel<Currency> {
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("INSERT INTO currencies VALUES(?, ?, ?)");
+            statement = connection.prepareStatement("INSERT INTO users VALUES(?, ?, ?, ?)");
 
-            statement.setString(1, obj.getCurrencyId());
-            statement.setString(2, obj.getName());
-            statement.setDouble(3, obj.getRate());
+            statement.setString(1, obj.getUserId());
+            statement.setString(2, obj.getUsername());
+            statement.setString(3, obj.getEmail());
+            statement.setString(4, obj.getPassword());
 
             statement.addBatch();
             statement.executeBatch();

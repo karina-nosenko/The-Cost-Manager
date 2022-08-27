@@ -1,13 +1,13 @@
-package il.ac.shenkar.costmanager.client.model;
+package il.ac.shenkar.costmanager.client.models;
 
 import il.ac.shenkar.costmanager.CostManagerException;
-import il.ac.shenkar.costmanager.entities.Category;
+import il.ac.shenkar.costmanager.entities.Currency;
 
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CategoryModel implements IModel<Category> {
+public class CurrencyModel implements IModel<Currency> {
 
     private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) {
         if(connection!=null) {
@@ -33,29 +33,28 @@ public class CategoryModel implements IModel<Category> {
         }
     }
 
-    public CategoryModel() throws ClassNotFoundException {
+    public CurrencyModel() throws ClassNotFoundException {
         Class.forName(driver);
     }
 
-    public List<Category> getByUserId(String userId) throws CostManagerException {
+    @Override
+    public List<Currency> getAll() throws CostManagerException {
 
         Connection connection = null;
         ResultSet rs = null;
         PreparedStatement statement = null;
-        List<Category> resultList = new LinkedList<>();
+        List<Currency> resultList = new LinkedList<>();
 
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("SELECT categoryId, userId, name FROM categories WHERE userId = ?");
-
-            statement.setString(1, userId);
+            statement = connection.prepareStatement("SELECT currencyId, name, rate FROM currencies");
 
             rs = statement.executeQuery();
 
             while(rs.next())
             {
-                resultList.add(new Category(rs.getString("categoryId"), rs.getString("userId"), rs.getString("name")));
+                resultList.add(new Currency(rs.getString("currencyId"),rs.getString("name"),rs.getDouble("rate")));
             }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
@@ -68,45 +67,16 @@ public class CategoryModel implements IModel<Category> {
     }
 
     @Override
-    public List<Category> getAll() throws CostManagerException {
-
+    public Currency getById(String id) throws CostManagerException {
         Connection connection = null;
         ResultSet rs = null;
         PreparedStatement statement = null;
-        List<Category> resultList = new LinkedList<>();
+        List<Currency> resultList = new LinkedList<>();
 
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("SELECT categoryId, userId, name FROM categories");
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                resultList.add(new Category(rs.getString("categoryId"), rs.getString("userId"), rs.getString("name")));
-            }
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
-        }
-
-        return resultList;
-    }
-
-    @Override
-    public Category getById(String id) throws CostManagerException {
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        List<Category> resultList = new LinkedList<>();
-
-        try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
-            statement = connection.prepareStatement("SELECT categoryId, userId, name FROM categories WHERE categoryId = ?");
+            statement = connection.prepareStatement("SELECT currencyId, name, rate FROM currencies WHERE currencyId = ?");
 
             statement.setString(1, id);
 
@@ -114,7 +84,7 @@ public class CategoryModel implements IModel<Category> {
 
             while(rs.next())
             {
-                resultList.add(new Category(rs.getString("categoryId"), rs.getString("userId"), rs.getString("name")));
+                resultList.add(new Currency(rs.getString("currencyId"),rs.getString("name"),rs.getDouble("rate")));
             }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
@@ -123,11 +93,11 @@ public class CategoryModel implements IModel<Category> {
             closeConnections(connection, rs, statement);
         }
 
-        return resultList.size() > 0 ? resultList.get(0) : new Category();
+        return resultList.size() > 0 ? resultList.get(0) : new Currency();
     }
 
     @Override
-    public void add(Category obj) throws CostManagerException {
+    public void add(Currency obj) throws CostManagerException {
         Connection connection = null;
         ResultSet rs = null;
         PreparedStatement statement = null;
@@ -135,11 +105,11 @@ public class CategoryModel implements IModel<Category> {
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("INSERT INTO categories VALUES(?, ?, ?)");
+            statement = connection.prepareStatement("INSERT INTO currencies VALUES(?, ?, ?)");
 
-            statement.setString(1, obj.getCategoryId());
-            statement.setString(2, obj.getUserId());
-            statement.setString(3, obj.getName());
+            statement.setString(1, obj.getCurrencyId());
+            statement.setString(2, obj.getName());
+            statement.setDouble(3, obj.getRate());
 
             statement.addBatch();
             statement.executeBatch();

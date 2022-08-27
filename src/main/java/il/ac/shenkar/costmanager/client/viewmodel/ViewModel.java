@@ -1,17 +1,16 @@
 package il.ac.shenkar.costmanager.client.viewmodel;
 
 import il.ac.shenkar.costmanager.CostManagerException;
-import il.ac.shenkar.costmanager.client.model.IModel;
-import il.ac.shenkar.costmanager.client.model.CategoryModel;
-import il.ac.shenkar.costmanager.client.model.CostModel;
-import il.ac.shenkar.costmanager.client.model.CurrencyModel;
-import il.ac.shenkar.costmanager.client.model.UserModel;
+import il.ac.shenkar.costmanager.client.models.IModel;
+import il.ac.shenkar.costmanager.client.models.CategoryModel;
+import il.ac.shenkar.costmanager.client.models.CostModel;
+import il.ac.shenkar.costmanager.client.models.CurrencyModel;
+import il.ac.shenkar.costmanager.client.models.UserModel;
 import il.ac.shenkar.costmanager.client.view.IView;
 import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.Cost;
 import il.ac.shenkar.costmanager.entities.Currency;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
