@@ -8,6 +8,7 @@ import il.ac.shenkar.costmanager.client.model.CurrencyModel;
 import il.ac.shenkar.costmanager.client.model.UserModel;
 import il.ac.shenkar.costmanager.client.view.IView;
 import il.ac.shenkar.costmanager.entities.Category;
+import il.ac.shenkar.costmanager.entities.Cost;
 import il.ac.shenkar.costmanager.entities.Currency;
 
 import java.util.LinkedList;
@@ -73,6 +74,20 @@ public class ViewModel implements IViewModel {
             }
 
             view.setCategories(categories);
+        });
+    }
+
+    @Override
+    public void getCosts() {
+        service.submit(() -> {
+            List<Cost> costs;
+            try {
+                costs = costModel.getByUserId("91966493-d06c-4593-bdb2-0fb1a084b6f8");
+            } catch (CostManagerException e) {
+                throw new RuntimeException(e);
+            }
+
+            view.setCosts(costs);
         });
     }
 

@@ -26,6 +26,8 @@ public class View implements IView {
     JComboBox currenciesBox;
     JComboBox categoriesBox;
     JTextArea categoriesList;
+    JPanel costsList;
+    JLabel emptyCostsMessage;
 
     public View() {
 
@@ -159,41 +161,8 @@ public class View implements IView {
     void buildMyCostsScreen() {
 
         // building the costs list
-        JPanel costsList = new JPanel();
         costsList.setPreferredSize(new Dimension(800, 480));
         costsList.setBackground(Color.WHITE);
-
-        Cost[] costs = {
-                new Cost(null, "123", 20, "123", "Bread, some stuff, different stuff", null),
-                new Cost(null, "123", 20, "123", "Bread, some stuff, different stuff", null),
-                new Cost(null, "123", 20, "123", "Bread, some stuff, different stuff", null),
-                new Cost(null, "123", 20, "123", "Bread, some stuff, different stuff", null),
-                new Cost(null, "123", 20, "123", "Bread, some stuff, different stuff", null),
-        };
-
-        if (costs.length == 0) {
-            JLabel emptyMessage = generateLabel("Empty List", 70, 30);
-            costsList.add(emptyMessage);
-        }
-
-        for(var cost : costs) {
-            JPanel costPanel = new JPanel();
-            costPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
-            costPanel.setBackground(Color.decode("#F3F1F1"));
-            costPanel.setPreferredSize(new Dimension(800, 60));
-            costPanel.setBorder(new EmptyBorder(10, 5, 10, 5));
-
-            JLabel category = generateLabel("Groceries", 150, 30);
-            JLabel sum = generateLabel(String.valueOf(cost.getSum()), 30, 30);
-            JLabel currency = generateLabel("USD", 150, 30);
-            JLabel description = generateLabel(cost.getDescription(), 270, 30);
-            costPanel.add(category);
-            costPanel.add(sum);
-            costPanel.add(currency);
-            costPanel.add(description);
-
-            costsList.add(costPanel);
-        }
 
         // building the MY Costs screen
         screenMyCosts.setBackground(Color.WHITE);
@@ -324,10 +293,6 @@ public class View implements IView {
             nameField.setText("");
             categoriesBox.removeAllItems();
             vm.addCategory(category);
-
-//            cards.show(screen, "AddCategory");
-//            topPanels.show(panelTop, "TopLogout");
-//            rightPanels.show(panelRight, "RightAuthorized");
         });
     }
 
@@ -482,6 +447,7 @@ public class View implements IView {
 
         vm.getCurrencies();
         vm.getCategories();
+        vm.getCosts();
     }
 
     void removeItemsFromModel() {
@@ -489,6 +455,33 @@ public class View implements IView {
         currenciesBox.removeAllItems();
         categoriesBox.removeAllItems();
         categoriesList = new JTextArea();
+        costsList.removeAll();
+    }
+
+    void generateCostsList(List<Cost> costs) {
+        if (costs.size() == 0) {
+            JLabel emptyMessage = generateLabel("Empty List", 70, 30);
+            costsList.add(emptyMessage);
+        }
+
+        for (var cost : costs) {
+            JPanel costPanel = new JPanel();
+            costPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+            costPanel.setBackground(Color.decode("#F3F1F1"));
+            costPanel.setPreferredSize(new Dimension(800, 60));
+            costPanel.setBorder(new EmptyBorder(10, 5, 10, 5));
+
+            JLabel category = generateLabel(cost.getCategoryId(), 150, 30); // get here the category
+            JLabel sum = generateLabel(String.valueOf(cost.getSum()), 30, 30);
+            JLabel currency = generateLabel(cost.getCurrencyId(), 150, 30); // get currency here
+            JLabel description = generateLabel(cost.getDescription(), 270, 30);
+            costPanel.add(category);
+            costPanel.add(sum);
+            costPanel.add(currency);
+            costPanel.add(description);
+
+            costsList.add(costPanel);
+        }
     }
 
     @Override
@@ -513,6 +506,13 @@ public class View implements IView {
     @Override
     public void setCosts(List<Cost> costs) {
 
+        if(SwingUtilities.isEventDispatchThread()) {
+            generateCostsList(costs);
+        } else {
+            SwingUtilities.invokeLater(() -> {
+                generateCostsList(costs);
+            });
+        }
     }
 
     @Override
@@ -551,6 +551,8 @@ public class View implements IView {
         currenciesBox = new JComboBox();
         categoriesBox = new JComboBox();
         categoriesList = new JTextArea();
+        costsList = new JPanel();
+        emptyCostsMessage = new JLabel("Empty List.");
 
         // setting cards
         screen.add(screenMyCosts, "MyCosts");

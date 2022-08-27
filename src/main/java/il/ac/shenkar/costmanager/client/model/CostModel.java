@@ -37,6 +37,42 @@ public class CostModel implements IModel<Cost> {
         Class.forName(driver);
     }
 
+    public List<Cost> getByUserId(String userId) throws CostManagerException {
+
+        Connection connection = null;
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        List<Cost> resultList = new LinkedList<>();
+
+        try {
+            connection = DriverManager.getConnection(connectionString, db_user, db_password);
+
+            statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE userId = ?");
+
+            statement.setString(1, userId);
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                resultList.add(new Cost(
+                        rs.getString("costId"),
+                        rs.getString("userId"),
+                        rs.getString("categoryId"),
+                        rs.getDouble("sum"),
+                        rs.getString("currencyId"),
+                        rs.getString("description"),
+                        rs.getString("creationDate")));
+            }
+        } catch (SQLException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+        finally {
+            closeConnections(connection, rs, statement);
+        }
+
+        return resultList;
+    }
     @Override
     public List<Cost> getAll() throws CostManagerException {
 
@@ -48,7 +84,7 @@ public class CostModel implements IModel<Cost> {
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("SELECT costId, categoryId, sum, currencyId, description, creationDate FROM costs");
+            statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs");
 
             rs = statement.executeQuery();
 
@@ -56,6 +92,7 @@ public class CostModel implements IModel<Cost> {
             {
                 resultList.add(new Cost(
                         rs.getString("costId"),
+                        rs.getString("userId"),
                         rs.getString("categoryId"),
                         rs.getDouble("sum"),
                         rs.getString("currencyId"),
@@ -82,7 +119,7 @@ public class CostModel implements IModel<Cost> {
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("SELECT costId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE costId = ?");
+            statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE costId = ?");
 
             statement.setString(1, id);
 
@@ -92,6 +129,7 @@ public class CostModel implements IModel<Cost> {
             {
                 resultList.add(new Cost(
                         rs.getString("costId"),
+                        rs.getString("userId"),
                         rs.getString("categoryId"),
                         rs.getDouble("sum"),
                         rs.getString("currencyId"),
@@ -117,14 +155,15 @@ public class CostModel implements IModel<Cost> {
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("INSERT INTO costs VALUES(?, ?, ?, ?, ?, ?)");
+            statement = connection.prepareStatement("INSERT INTO costs VALUES(?, ?, ?, ?, ?, ?, ?)");
 
             statement.setString(1, obj.getCostId());
-            statement.setString(2, obj.getCategoryId());
-            statement.setDouble(3, obj.getSum());
-            statement.setString(4, obj.getCurrencyId());
-            statement.setString(5, obj.getDescription());
-            statement.setString(6, obj.getCreationDate());
+            statement.setString(2, obj.getUserId());
+            statement.setString(3, obj.getCategoryId());
+            statement.setDouble(4, obj.getSum());
+            statement.setString(5, obj.getCurrencyId());
+            statement.setString(6, obj.getDescription());
+            statement.setString(7, obj.getCreationDate());
 
             statement.addBatch();
             statement.executeBatch();

@@ -9,6 +9,7 @@ import il.ac.shenkar.costmanager.client.view.IView;
 import il.ac.shenkar.costmanager.client.view.View;
 import il.ac.shenkar.costmanager.client.viewmodel.IViewModel;
 import il.ac.shenkar.costmanager.client.viewmodel.ViewModel;
+import il.ac.shenkar.costmanager.entities.Cost;
 
 import javax.swing.*;
 
@@ -27,6 +28,12 @@ public class ClientProgram {
 //        categoryModel.add(new Category(null, "91966493-d06c-4593-bdb2-0fb1a084b6f8", "Purchases"));
 //        categoryModel.add(new Category(null, "91966493-d06c-4593-bdb2-0fb1a084b6f8", "Health"));
 //        categoryModel.add(new Category(null, "91966493-d06c-4593-bdb2-0fb1a084b6f8", "Gifts"));
+
+//        try {
+//            costModel.add(new Cost(null, "91966493-d06c-4593-bdb2-0fb1a084b6f8", "c63f7abb-17e2-4c5d-9bdc-8939c83c0144", 500, "c554b888-63ab-4ea6-b648-07d1a61d3039", "Student transport pack for semester", null));
+//        } catch (CostManagerException e) {
+//            throw new RuntimeException(e);
+//        }
 
         SwingUtilities.invokeLater(() -> {
             IView view = new View();

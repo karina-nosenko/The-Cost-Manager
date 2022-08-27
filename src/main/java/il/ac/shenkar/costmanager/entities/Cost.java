@@ -7,6 +7,7 @@ import static java.util.UUID.randomUUID;
 public class Cost {
 
     private String costId;
+    private String userId;
     private String categoryId;
     private double sum;
     private String currencyId;
@@ -15,6 +16,7 @@ public class Cost {
 
     public Cost() {
         setCostId("");
+        setUserId("");
         setCategoryId("");
         setSum(0);
         setCurrencyId("");
@@ -22,7 +24,7 @@ public class Cost {
         setCreationDate("");
     }
 
-    public Cost(String costId, String categoryId, double sum, String currencyId, String description, String creationDate) {
+    public Cost(String costId, String userId, String categoryId, double sum, String currencyId, String description, String creationDate) {
         if (costId == null || costId.isBlank()) {
             setCostId(randomUUID().toString());
         } else {
@@ -36,6 +38,7 @@ public class Cost {
         }
 
         setCategoryId(categoryId);
+        setUserId(userId);
         setSum(sum);
         setCurrencyId(currencyId);
         setDescription(description);
@@ -47,6 +50,13 @@ public class Cost {
 
     public void setCostId(String costId) {
         this.costId = costId;
+    }
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getCategoryId() {

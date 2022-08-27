@@ -11,6 +11,7 @@ public interface IViewModel {
 
     public void getCurrencies();
     public void getCategories();
+    public void getCosts();
     public void addCategory(Category category);
     public void setUserModel(UserModel model);
     public void setCurrencyModel(CurrencyModel model);
