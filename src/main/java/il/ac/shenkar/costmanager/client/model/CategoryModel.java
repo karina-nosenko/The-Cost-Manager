@@ -37,6 +37,36 @@ public class CategoryModel implements IModel<Category> {
         Class.forName(driver);
     }
 
+    public List<Category> getByUserId(String userId) throws CostManagerException {
+
+        Connection connection = null;
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        List<Category> resultList = new LinkedList<>();
+
+        try {
+            connection = DriverManager.getConnection(connectionString, db_user, db_password);
+
+            statement = connection.prepareStatement("SELECT categoryId, userId, name FROM categories WHERE userId = ?");
+
+            statement.setString(1, userId);
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                resultList.add(new Category(rs.getString("categoryId"), rs.getString("userId"), rs.getString("name")));
+            }
+        } catch (SQLException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+        finally {
+            closeConnections(connection, rs, statement);
+        }
+
+        return resultList;
+    }
+
     @Override
     public List<Category> getAll() throws CostManagerException {
 

@@ -67,7 +67,7 @@ public class ViewModel implements IViewModel {
         service.submit(() -> {
             List<Category> categories;
             try {
-                categories = categoryModel.getAll();
+                categories = categoryModel.getByUserId("91966493-d06c-4593-bdb2-0fb1a084b6f8");
             } catch (CostManagerException e) {
                 throw new RuntimeException(e);
             }
