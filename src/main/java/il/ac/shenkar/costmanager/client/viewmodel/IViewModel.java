@@ -9,6 +9,7 @@ import il.ac.shenkar.costmanager.client.view.IView;
 public interface IViewModel {
 
     public void getCurrencies();
+    public void getCategories();
     public void setUserModel(UserModel model);
     public void setCurrencyModel(CurrencyModel model);
     public void setCostModel(CostModel model);

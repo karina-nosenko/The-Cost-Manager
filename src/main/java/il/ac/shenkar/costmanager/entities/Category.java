@@ -5,20 +5,22 @@ import static java.util.UUID.randomUUID;
 public class Category {
 
     private String categoryId;
+    private String userId;
     private String name;
 
     public Category() {
         setCategoryId("");
+        setUserId("");
         setName("");
     }
 
-    public Category(String categoryId, String name) {
+    public Category(String categoryId, String userId, String name) {
         if (categoryId == null || categoryId.isBlank()) {
             setCategoryId(randomUUID().toString());
         } else {
             setCategoryId(categoryId);
         }
-
+        setUserId(userId);
         setName(name);
     }
 
@@ -28,6 +30,13 @@ public class Category {
 
     public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
+    }
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -42,6 +51,7 @@ public class Category {
     public String toString() {
         return "Category {" +
                 "categoryId=" + categoryId +
+                ", userId=" + userId +
                 ", name=" + name +
                 '}';
     }

@@ -48,13 +48,13 @@ public class CategoryModel implements IModel<Category> {
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("SELECT categoryId, name FROM categories");
+            statement = connection.prepareStatement("SELECT categoryId, userId, name FROM categories");
 
             rs = statement.executeQuery();
 
             while(rs.next())
             {
-                resultList.add(new Category(rs.getString("categoryId"),rs.getString("name")));
+                resultList.add(new Category(rs.getString("categoryId"), rs.getString("userId"), rs.getString("name")));
             }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
@@ -76,7 +76,7 @@ public class CategoryModel implements IModel<Category> {
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("SELECT categoryId, name FROM categories WHERE categoryId = ?");
+            statement = connection.prepareStatement("SELECT categoryId, userId, name FROM categories WHERE categoryId = ?");
 
             statement.setString(1, id);
 
@@ -84,7 +84,7 @@ public class CategoryModel implements IModel<Category> {
 
             while(rs.next())
             {
-                resultList.add(new Category(rs.getString("categoryId"),rs.getString("name")));
+                resultList.add(new Category(rs.getString("categoryId"), rs.getString("userId"), rs.getString("name")));
             }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
@@ -105,10 +105,11 @@ public class CategoryModel implements IModel<Category> {
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("INSERT INTO categories VALUES(?, ?)");
+            statement = connection.prepareStatement("INSERT INTO categories VALUES(?, ?, ?)");
 
             statement.setString(1, obj.getCategoryId());
-            statement.setString(2, obj.getName());
+            statement.setString(2, obj.getUserId());
+            statement.setString(3, obj.getName());
 
             statement.addBatch();
             statement.executeBatch();

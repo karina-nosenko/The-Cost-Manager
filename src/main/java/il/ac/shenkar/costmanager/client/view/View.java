@@ -23,8 +23,9 @@ public class View implements IView {
     private JPanel screen,screenMyCosts, screenAddCost, screenAddCategory, screenLogin, screenLogup;
     private JPanel panelTopLogin, panelTopLogup, panelTopLogout, panelTop, panelRightAuthorized, panelRightUnauthorized, panelRight;
     private JButton buttonMyCosts, buttonAddCost, buttonAddCategory, buttonLogin, buttonLogup, buttonLogout;
-
     JComboBox currenciesBox;
+    JComboBox categoriesBox;
+    JTextArea categoriesList;
 
     public View() {
 
@@ -227,22 +228,6 @@ public class View implements IView {
         sumInput.add(currenciesBox);
 
         // building categories input
-        Category[] categories = {
-                new Category(null, "Groceries"),
-                new Category(null, "Transport"),
-                new Category(null, "Leisure"),
-                new Category(null, "Purchases"),
-                new Category(null, "Health"),
-                new Category(null, "Gifts")
-        };
-
-        Vector<String> categoriesStrings = new Vector<String>();
-        for (var category : categories) {
-            categoriesStrings.add(category.getName());
-        }
-
-        JComboBox categoriesBox = new JComboBox(categoriesStrings);
-        categoriesBox.setSelectedIndex(0);
         categoriesBox.setPreferredSize(new Dimension(150, 30));
         categoriesBox.setBackground(Color.WHITE);
         categoriesBox.setBorder(BorderFactory.createLineBorder(Color.decode("#C5C5C5")));
@@ -300,28 +285,12 @@ public class View implements IView {
         nameInput.add(nameField);
 
         // building categories list display
-        JTextArea categoriesList = new JTextArea();
         categoriesList.setLayout(new FlowLayout(FlowLayout.LEADING));
         categoriesList.setBackground(Color.decode("#F3F1F1"));
         categoriesList.setBorder(new EmptyBorder(15, 15, 15, 15));
         categoriesList.setPreferredSize(new Dimension(800, 200));
         categoriesList.setLineWrap(true);
         categoriesList.setEditable(false);
-
-        Category[] categories = {
-                new Category(null, "Groceries"),
-                new Category(null, "Transport"),
-                new Category(null, "Leisure"),
-                new Category(null, "Purchases"),
-                new Category(null, "Health"),
-                new Category(null, "Gifts")
-        };
-
-        for (var category : categories) {
-            JLabel categoryName = new JLabel(category.getName());
-            categoryName.setPreferredSize(new Dimension(70, 30));
-            categoriesList.add(categoryName);
-        }
 
         // building the Add Category form
         JButton addButton = new JButton("Add");
@@ -499,11 +468,14 @@ public class View implements IView {
     void addItemsFromModel() {
 
         vm.getCurrencies();
+        vm.getCategories();
     }
 
     void removeItemsFromModel() {
 
         currenciesBox.removeAllItems();
+        categoriesBox.removeAllItems();
+        categoriesList = new JTextArea();
     }
 
     @Override
@@ -514,6 +486,15 @@ public class View implements IView {
     @Override
     public void setCategories(List<Category> categories) {
 
+        for (var category : categories) {
+            JLabel categoryName = new JLabel(category.getName());
+            categoryName.setPreferredSize(new Dimension(70, 30));
+            categoriesList.add(categoryName);
+
+            categoriesBox.addItem(category.getName());
+        }
+
+        categoriesBox.setSelectedIndex(0);
     }
 
     @Override
@@ -527,6 +508,7 @@ public class View implements IView {
         for (var currency : currenciesList) {
             currenciesBox.addItem(currency.getName());
         }
+
         currenciesBox.setSelectedIndex(0);
     }
 
@@ -552,8 +534,10 @@ public class View implements IView {
         screenLogin.setLayout(new BorderLayout());
         screenLogup.setLayout(new BorderLayout());
 
-        // setting combo boxes
+        // setting components
         currenciesBox = new JComboBox();
+        categoriesBox = new JComboBox();
+        categoriesList = new JTextArea();
 
         // setting cards
         screen.add(screenMyCosts, "MyCosts");
