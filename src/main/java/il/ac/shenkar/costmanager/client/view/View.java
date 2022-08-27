@@ -173,29 +173,6 @@ public class View implements IView {
 
     void buildAddCostScreen() {
 
-        // building name input
-        JLabel nameLabel = generateLabel("Name", 60, 30);
-        JTextField nameField = generateTextField("", 150, 30);
-        JPanel nameInput = new JPanel();
-        nameInput.setBackground(Color.WHITE);
-        nameInput.add(nameLabel);
-        nameInput.add(nameField);
-
-        // building currencies input
-        currenciesBox.setPreferredSize(new Dimension(70, 30));
-        currenciesBox.setBackground(Color.WHITE);
-        currenciesBox.setBorder(BorderFactory.createLineBorder(Color.decode("#C5C5C5")));
-
-        // building sum input
-        JLabel sumLabel = generateLabel("Sum", 60, 30);
-        JTextField sumField = generateTextField("0", 75, 30);
-        JPanel sumInput = new JPanel();
-        sumInput.setLayout(new FlowLayout(FlowLayout.LEADING));
-        sumInput.setBackground(Color.WHITE);
-        sumInput.add(sumLabel);
-        sumInput.add(sumField);
-        sumInput.add(currenciesBox);
-
         // building categories input
         categoriesBox.setPreferredSize(new Dimension(150, 30));
         categoriesBox.setBackground(Color.WHITE);
@@ -206,6 +183,21 @@ public class View implements IView {
         categoryInput.setBackground(Color.WHITE);
         categoryInput.add(categoryLabel);
         categoryInput.add(categoriesBox);
+
+        // building currencies input
+        currenciesBox.setPreferredSize(new Dimension(70, 30));
+        currenciesBox.setBackground(Color.WHITE);
+        currenciesBox.setBorder(BorderFactory.createLineBorder(Color.decode("#C5C5C5")));
+
+        // building sum input
+        JLabel sumLabel = generateLabel("Sum", 60, 30);
+        JTextField sumField = generateTextField("", 75, 30);
+        JPanel sumInput = new JPanel();
+        sumInput.setLayout(new FlowLayout(FlowLayout.LEADING));
+        sumInput.setBackground(Color.WHITE);
+        sumInput.add(sumLabel);
+        sumInput.add(sumField);
+        sumInput.add(currenciesBox);
 
         // building description input
         JLabel descriptionLabel = generateLabel("Description", 70, 30);
@@ -222,12 +214,11 @@ public class View implements IView {
         JPanel addCostForm = new JPanel(new SpringLayout());
         addCostForm.setPreferredSize(new Dimension(580, 480));
         addCostForm.setBackground(Color.WHITE);
-        addCostForm.add(nameInput, generateSpringConstraint(0, 0));
+        addCostForm.add(categoryInput, generateSpringConstraint(0, 0));
         addCostForm.add(sumInput, generateSpringConstraint(0, 50));
-        addCostForm.add(categoryInput, generateSpringConstraint(0, 100));
-        addCostForm.add(descriptionLabel, generateSpringConstraint(0, 150));
-        addCostForm.add(descriptionArea, generateSpringConstraint(0, 180));
-        addCostForm.add(saveButton, generateSpringConstraint(0, 270));
+        addCostForm.add(descriptionLabel, generateSpringConstraint(0, 100));
+        addCostForm.add(descriptionArea, generateSpringConstraint(0, 130));
+        addCostForm.add(saveButton, generateSpringConstraint(0, 220));
 
         // building the Add Cost screen
         screenAddCost.setBackground(Color.WHITE);
@@ -237,6 +228,33 @@ public class View implements IView {
 
         // handling events
         saveButton.addActionListener(e -> {
+
+            // do nothing if the sum is empty
+            String sum = sumField.getText();
+            if (sum.isEmpty() || sum.isBlank()) {
+                return;
+            }
+
+            // add the new cost
+            Category category = (Category)categoriesBox.getSelectedItem();
+            Currency currency = (Currency)currenciesBox.getSelectedItem();
+            String description = descriptionArea.getText().isEmpty() || descriptionArea.getText().isBlank() ? "" : descriptionArea.getText();
+            Cost cost = new Cost(
+                    null,
+                    "91966493-d06c-4593-bdb2-0fb1a084b6f8",
+                    category.getCategoryId(),
+                    Double.parseDouble(sum),
+                    currency.getCurrencyId(),
+                    description,
+                    null);
+
+            vm.addCost(cost);
+
+            // clear the fields
+            sumField.setText("");
+            descriptionArea.setText("");
+
+            // move to the My Costs screen
             cards.show(screen, "MyCosts");
             topPanels.show(panelTop, "TopLogout");
             rightPanels.show(panelRight, "RightAuthorized");
@@ -290,9 +308,11 @@ public class View implements IView {
 
             // add the new category
             Category category = new Category(null, "91966493-d06c-4593-bdb2-0fb1a084b6f8", newCategoryName);
+            vm.addCategory(category);
+
+            // clear the fields
             nameField.setText("");
             categoriesBox.removeAllItems();
-            vm.addCategory(category);
         });
     }
 
@@ -460,6 +480,8 @@ public class View implements IView {
 
     void generateCostsList(List<Cost> costs) {
 
+        costsList.removeAll();
+
         if (costs.size() == 0) {
             JLabel emptyMessage = generateLabel("Empty List", 70, 30);
             costsList.add(emptyMessage);
@@ -502,9 +524,11 @@ public class View implements IView {
             stringBuffer.append(category.getName());
             stringBuffer.append("\t");
 
-            categoriesBox.addItem(category.getName());
+            categoriesBox.addItem(category);
         }
+
         categoriesList.setText(stringBuffer.toString());
+
         categoriesBox.setSelectedIndex(0);
     }
 
@@ -524,7 +548,7 @@ public class View implements IView {
     public void setCurrencies(List<Currency> currenciesList) {
 
         for (var currency : currenciesList) {
-            currenciesBox.addItem(currency.getName());
+            currenciesBox.addItem(currency);
         }
 
         currenciesBox.setSelectedIndex(0);

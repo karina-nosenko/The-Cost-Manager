@@ -114,6 +114,19 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
+    public void addCost(Cost cost) {
+        service.submit(() -> {
+            try {
+                costModel.add(cost);
+            } catch (CostManagerException e) {
+                throw new RuntimeException(e);
+            }
+
+            getCosts();
+        });
+    }
+
+    @Override
     public void setView(IView view) {
         this.view = view;
     }

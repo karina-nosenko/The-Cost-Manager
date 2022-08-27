@@ -49,10 +49,6 @@ public class Category {
 
     @Override
     public String toString() {
-        return "Category {" +
-                "categoryId=" + categoryId +
-                ", userId=" + userId +
-                ", name=" + name +
-                '}';
+        return name;
     }
 }
