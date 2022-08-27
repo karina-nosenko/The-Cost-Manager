@@ -83,6 +83,15 @@ public class ViewModel implements IViewModel {
             List<Cost> costs;
             try {
                 costs = costModel.getByUserId("91966493-d06c-4593-bdb2-0fb1a084b6f8");
+                for (var cost : costs) {
+                    // replace categoryId by category name
+                    Category category = categoryModel.getById(cost.getCategoryId());
+                    cost.setCategoryId(category.getName());
+
+                    // replace currencyId by currency name
+                    Currency currency = currencyModel.getById(cost.getCurrencyId());
+                    cost.setCurrencyId(currency.getName());
+                }
             } catch (CostManagerException e) {
                 throw new RuntimeException(e);
             }

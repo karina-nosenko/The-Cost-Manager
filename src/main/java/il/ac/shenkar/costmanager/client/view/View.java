@@ -459,27 +459,32 @@ public class View implements IView {
     }
 
     void generateCostsList(List<Cost> costs) {
+
+        costsList.revalidate();
+        costsList.repaint();
+
         if (costs.size() == 0) {
             JLabel emptyMessage = generateLabel("Empty List", 70, 30);
             costsList.add(emptyMessage);
         }
 
         for (var cost : costs) {
-            JPanel costPanel = new JPanel();
+            JTextArea costPanel = new JTextArea();
             costPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
             costPanel.setBackground(Color.decode("#F3F1F1"));
             costPanel.setPreferredSize(new Dimension(800, 60));
-            costPanel.setBorder(new EmptyBorder(10, 5, 10, 5));
+            costPanel.setBorder(new EmptyBorder(20, 10, 10, 10));
 
-            JLabel category = generateLabel(cost.getCategoryId(), 150, 30); // get here the category
-            JLabel sum = generateLabel(String.valueOf(cost.getSum()), 30, 30);
-            JLabel currency = generateLabel(cost.getCurrencyId(), 150, 30); // get currency here
-            JLabel description = generateLabel(cost.getDescription(), 270, 30);
-            costPanel.add(category);
-            costPanel.add(sum);
-            costPanel.add(currency);
-            costPanel.add(description);
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append(cost.getCategoryId());
+            stringBuffer.append("\t\t");
+            stringBuffer.append(cost.getSum());
+            stringBuffer.append(" ");
+            stringBuffer.append(cost.getCurrencyId());
+            stringBuffer.append("\t\t");
+            stringBuffer.append(cost.getDescription());
 
+            costPanel.setText(stringBuffer.toString());
             costsList.add(costPanel);
         }
     }
