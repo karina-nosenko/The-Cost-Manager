@@ -460,9 +460,6 @@ public class View implements IView {
 
     void generateCostsList(List<Cost> costs) {
 
-        costsList.revalidate();
-        costsList.repaint();
-
         if (costs.size() == 0) {
             JLabel emptyMessage = generateLabel("Empty List", 70, 30);
             costsList.add(emptyMessage);
@@ -487,6 +484,9 @@ public class View implements IView {
             costPanel.setText(stringBuffer.toString());
             costsList.add(costPanel);
         }
+
+        costsList.revalidate();
+        costsList.repaint();
     }
 
     @Override
