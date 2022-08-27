@@ -4,12 +4,15 @@ import il.ac.shenkar.costmanager.client.viewmodel.IViewModel;
 import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.Cost;
 import il.ac.shenkar.costmanager.entities.Currency;
+import il.ac.shenkar.costmanager.entities.User;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 public class View implements IView {
@@ -20,6 +23,8 @@ public class View implements IView {
     private JPanel screen,screenMyCosts, screenAddCost, screenAddCategory, screenLogin, screenLogup;
     private JPanel panelTopLogin, panelTopLogup, panelTopLogout, panelTop, panelRightAuthorized, panelRightUnauthorized, panelRight;
     private JButton buttonMyCosts, buttonAddCost, buttonAddCategory, buttonLogin, buttonLogup, buttonLogout;
+
+    JComboBox currenciesBox;
 
     public View() {
 
@@ -112,6 +117,8 @@ public class View implements IView {
             cards.show(screen, "Login");
             topPanels.show(panelTop, "TopLogup");
             rightPanels.show(panelRight, "RightUnauthorized");
+
+            removeItemsFromModel();
         });
     }
 
@@ -205,20 +212,6 @@ public class View implements IView {
         nameInput.add(nameField);
 
         // building currencies input
-        Currency[] currencies = {
-                new Currency(null, "USD", 3.24),
-                new Currency(null, "GBP", 3.9093),
-                new Currency(null, "JPY", 2.3986),
-                new Currency(null, "EUR", 3.2987),
-        };
-
-        Vector<String> currenciesStrings = new Vector<String>();
-        for (var currency : currencies) {
-            currenciesStrings.add(currency.getName());
-        }
-
-        JComboBox currenciesBox = new JComboBox(currenciesStrings);
-        currenciesBox.setSelectedIndex(0);
         currenciesBox.setPreferredSize(new Dimension(70, 30));
         currenciesBox.setBackground(Color.WHITE);
         currenciesBox.setBorder(BorderFactory.createLineBorder(Color.decode("#C5C5C5")));
@@ -397,6 +390,8 @@ public class View implements IView {
             cards.show(screen, "MyCosts");
             topPanels.show(panelTop, "TopLogout");
             rightPanels.show(panelRight, "RightAuthorized");
+
+            addItemsFromModel();
         });
     }
 
@@ -450,6 +445,8 @@ public class View implements IView {
             cards.show(screen, "MyCosts");
             topPanels.show(panelTop, "TopLogout");
             rightPanels.show(panelRight, "RightAuthorized");
+
+            addItemsFromModel();
         });
     }
 
@@ -499,9 +496,43 @@ public class View implements IView {
         return passwordField;
     }
 
+    void addItemsFromModel() {
+
+        vm.getCurrencies();
+    }
+
+    void removeItemsFromModel() {
+
+        currenciesBox.removeAllItems();
+    }
+
     @Override
     public void setViewModel(IViewModel ob) {
         vm = ob;
+    }
+
+    @Override
+    public void setCategories(List<Category> categories) {
+
+    }
+
+    @Override
+    public void setCosts(List<Cost> costs) {
+
+    }
+
+    @Override
+    public void setCurrencies(List<Currency> currenciesList) {
+
+        for (var currency : currenciesList) {
+            currenciesBox.addItem(currency.getName());
+        }
+        currenciesBox.setSelectedIndex(0);
+    }
+
+    @Override
+    public void setUsers(List<User> users) {
+
     }
 
     @Override
@@ -520,6 +551,9 @@ public class View implements IView {
         screenAddCategory.setLayout(new BorderLayout());
         screenLogin.setLayout(new BorderLayout());
         screenLogup.setLayout(new BorderLayout());
+
+        // setting combo boxes
+        currenciesBox = new JComboBox();
 
         // setting cards
         screen.add(screenMyCosts, "MyCosts");
