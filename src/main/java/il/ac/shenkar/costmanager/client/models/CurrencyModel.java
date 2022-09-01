@@ -2,10 +2,18 @@ package il.ac.shenkar.costmanager.client.models;
 
 import il.ac.shenkar.costmanager.CostManagerException;
 import il.ac.shenkar.costmanager.entities.Currency;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class CurrencyModel implements IModel<Currency> {
 
@@ -40,30 +48,34 @@ public class CurrencyModel implements IModel<Currency> {
     @Override
     public List<Currency> getAll() throws CostManagerException {
 
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        List<Currency> resultList = new LinkedList<>();
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/currencies"))
+                .GET()
+                .build();
 
+        List<Currency> result = new LinkedList<>();
         try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String stringResponse = response.body();
+            JSONArray jsonArray = new JSONArray(stringResponse);
 
-            statement = connection.prepareStatement("SELECT currencyId, name, rate FROM currencies");
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                resultList.add(new Currency(rs.getString("currencyId"),rs.getString("name"),rs.getDouble("rate")));
+            for (int i=0; i< jsonArray.length(); i++) {
+                JSONObject currencyObj = jsonArray.getJSONObject(i);
+                Currency currency = new Currency(
+                        currencyObj.getString("currencyId"),
+                        currencyObj.getString("name"),
+                        currencyObj.getDouble("rate")
+                );
+                result.add(currency);
             }
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        return resultList;
+        return result;
     }
 
     @Override
