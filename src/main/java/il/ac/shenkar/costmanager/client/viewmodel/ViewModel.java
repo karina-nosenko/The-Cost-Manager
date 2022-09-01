@@ -1,5 +1,6 @@
 package il.ac.shenkar.costmanager.client.viewmodel;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import il.ac.shenkar.costmanager.CostManagerException;
 import il.ac.shenkar.costmanager.client.models.IModel;
 import il.ac.shenkar.costmanager.client.models.CategoryModel;

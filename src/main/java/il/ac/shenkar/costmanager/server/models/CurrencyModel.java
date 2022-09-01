@@ -37,6 +37,26 @@ public class CurrencyModel implements IModel<Currency> {
         Class.forName(driver);
     }
 
+    public void delete(String id) throws CostManagerException {
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = DriverManager.getConnection(connectionString, db_user, db_password);
+
+            statement = connection.prepareStatement("DELETE FROM currencies WHERE currencyId = ? ");
+            statement.setString(1, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+        finally {
+            closeConnections(connection, null, statement);
+        }
+    }
+
     @Override
     public List<Currency> getAll() throws CostManagerException {
 
@@ -77,7 +97,6 @@ public class CurrencyModel implements IModel<Currency> {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
             statement = connection.prepareStatement("SELECT currencyId, name, rate FROM currencies WHERE currencyId = ?");
-
             statement.setString(1, id);
 
             rs = statement.executeQuery();
@@ -106,7 +125,6 @@ public class CurrencyModel implements IModel<Currency> {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
             statement = connection.prepareStatement("INSERT INTO currencies VALUES(?, ?, ?)");
-
             statement.setString(1, obj.getCurrencyId());
             statement.setString(2, obj.getName());
             statement.setDouble(3, obj.getRate());

@@ -1,10 +1,13 @@
 package il.ac.shenkar.costmanager.client.models;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import il.ac.shenkar.costmanager.CostManagerException;
 import il.ac.shenkar.costmanager.entities.Currency;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.http.HttpHeaders;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +19,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class CurrencyModel implements IModel<Currency> {
+
+    final static String API_URL = "http://localhost:8080/currencies/";
 
     private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) {
         if(connection!=null) {
@@ -50,7 +55,7 @@ public class CurrencyModel implements IModel<Currency> {
 
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/currencies"))
+                .uri(URI.create(API_URL))
                 .GET()
                 .build();
 
@@ -79,57 +84,51 @@ public class CurrencyModel implements IModel<Currency> {
     }
 
     @Override
-    public Currency getById(String id) throws CostManagerException {
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        List<Currency> resultList = new LinkedList<>();
+    public Currency getById(String currencyId) throws CostManagerException {
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL + currencyId))
+                .GET()
+                .build();
 
+        Currency result = new Currency();
         try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
-            statement = connection.prepareStatement("SELECT currencyId, name, rate FROM currencies WHERE currencyId = ?");
-
-            statement.setString(1, id);
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                resultList.add(new Currency(rs.getString("currencyId"),rs.getString("name"),rs.getDouble("rate")));
-            }
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String stringResponse = response.body();
+            JSONObject currencyObj = new JSONObject(stringResponse);
+            result = new Currency(
+                    currencyObj.getString("currencyId"),
+                    currencyObj.getString("name"),
+                    currencyObj.getDouble("rate")
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        return resultList.size() > 0 ? resultList.get(0) : new Currency();
+        return result;
     }
 
     @Override
-    public void add(Currency obj) throws CostManagerException {
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
+    public void add(Currency obj) throws CostManagerException, JsonProcessingException {
 
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(obj);
+
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL))
+                .setHeader("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
         try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
-            statement = connection.prepareStatement("INSERT INTO currencies VALUES(?, ?, ?)");
-
-            statement.setString(1, obj.getCurrencyId());
-            statement.setString(2, obj.getName());
-            statement.setDouble(3, obj.getRate());
-
-            statement.addBatch();
-            statement.executeBatch();
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            int status = response.statusCode();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
