@@ -1,8 +1,10 @@
 package il.ac.shenkar.costmanager.server.controllers;
 
 import il.ac.shenkar.costmanager.CostManagerException;
+import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.Cost;
 import il.ac.shenkar.costmanager.entities.Currency;
+import il.ac.shenkar.costmanager.server.models.CategoryModel;
 import il.ac.shenkar.costmanager.server.models.CostModel;
 import il.ac.shenkar.costmanager.server.models.CurrencyModel;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,13 @@ public class CostController {
 
         CostModel costModel = new CostModel();
         return costModel.getAll();
+    }
+
+    @GetMapping("/costs/users/{userId}")
+    public List<Cost> getByUserId(@PathVariable("userId") String userId) throws ClassNotFoundException, CostManagerException {
+
+        CostModel costModel = new CostModel();
+        return costModel.getByUserId(userId);
     }
 
     @GetMapping("/costs/{costId}")

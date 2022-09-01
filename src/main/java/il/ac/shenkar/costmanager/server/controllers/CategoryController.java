@@ -19,6 +19,13 @@ public class CategoryController {
         return categoryModel.getAll();
     }
 
+    @GetMapping("/categories/users/{userId}")
+    public List<Category> getByUserId(@PathVariable("userId") String userId) throws ClassNotFoundException, CostManagerException {
+
+        CategoryModel categoryModel = new CategoryModel();
+        return categoryModel.getByUserId(userId);
+    }
+
     @GetMapping("/categories/{categoryId}")
     public Category getById(@PathVariable("categoryId") String categoryId) throws ClassNotFoundException, CostManagerException {
 
