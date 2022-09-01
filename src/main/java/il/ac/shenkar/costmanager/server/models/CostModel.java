@@ -174,4 +174,25 @@ public class CostModel implements IModel<Cost> {
             closeConnections(connection, rs, statement);
         }
     }
+
+    @Override
+    public void delete(String id) throws CostManagerException {
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = DriverManager.getConnection(connectionString, db_user, db_password);
+
+            statement = connection.prepareStatement("DELETE FROM costs WHERE costId = ? ");
+            statement.setString(1, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+        finally {
+            closeConnections(connection, null, statement);
+        }
+    }
 }
