@@ -1,177 +1,145 @@
 package il.ac.shenkar.costmanager.client.models;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import il.ac.shenkar.costmanager.CostManagerException;
 import il.ac.shenkar.costmanager.entities.Cost;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.sql.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.LinkedList;
 import java.util.List;
 
 public class CostModel implements IModel<Cost> {
 
-    private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) {
-        if(connection!=null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        if(rs!=null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        if(statement!=null) {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public CostModel() throws ClassNotFoundException {
-        Class.forName(driver);
-    }
-
     public List<Cost> getByUserId(String userId) throws CostManagerException {
 
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        List<Cost> resultList = new LinkedList<>();
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/costs/users/" + userId))
+                .GET()
+                .build();
 
+        List<Cost> result = new LinkedList<>();
         try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String stringResponse = response.body();
+            JSONArray jsonArray = new JSONArray(stringResponse);
 
-            statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE userId = ?");
-
-            statement.setString(1, userId);
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                resultList.add(new Cost(
-                        rs.getString("costId"),
-                        rs.getString("userId"),
-                        rs.getString("categoryId"),
-                        rs.getDouble("sum"),
-                        rs.getString("currencyId"),
-                        rs.getString("description"),
-                        rs.getString("creationDate")));
+            for (int i=0; i< jsonArray.length(); i++) {
+                JSONObject costObj = jsonArray.getJSONObject(i);
+                Cost cost = new Cost(
+                        costObj.getString("costId"),
+                        costObj.getString("userId"),
+                        costObj.getString("categoryId"),
+                        costObj.getDouble("sum"),
+                        costObj.getString("currencyId"),
+                        costObj.getString("description"),
+                        costObj.getString("creationDate")
+                );
+                result.add(cost);
             }
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        return resultList;
+        return result;
     }
+
     @Override
     public List<Cost> getAll() throws CostManagerException {
 
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        List<Cost> resultList = new LinkedList<>();
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/costs"))
+                .GET()
+                .build();
 
+        List<Cost> result = new LinkedList<>();
         try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String stringResponse = response.body();
+            JSONArray jsonArray = new JSONArray(stringResponse);
 
-            statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs");
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                resultList.add(new Cost(
-                        rs.getString("costId"),
-                        rs.getString("userId"),
-                        rs.getString("categoryId"),
-                        rs.getDouble("sum"),
-                        rs.getString("currencyId"),
-                        rs.getString("description"),
-                        rs.getString("creationDate")));
+            for (int i=0; i< jsonArray.length(); i++) {
+                JSONObject costObj = jsonArray.getJSONObject(i);
+                Cost cost = new Cost(
+                        costObj.getString("costId"),
+                        costObj.getString("userId"),
+                        costObj.getString("categoryId"),
+                        costObj.getDouble("sum"),
+                        costObj.getString("currencyId"),
+                        costObj.getString("description"),
+                        costObj.getString("creationDate")
+                );
+                result.add(cost);
             }
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        return resultList;
+        return result;
     }
 
     @Override
-    public Cost getById(String id) throws CostManagerException {
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        List<Cost> resultList = new LinkedList<>();
+    public Cost getById(String categoryId) throws CostManagerException {
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/costs/" + categoryId))
+                .GET()
+                .build();
 
+        Cost result = new Cost();
         try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
-            statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE costId = ?");
-
-            statement.setString(1, id);
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                resultList.add(new Cost(
-                        rs.getString("costId"),
-                        rs.getString("userId"),
-                        rs.getString("categoryId"),
-                        rs.getDouble("sum"),
-                        rs.getString("currencyId"),
-                        rs.getString("description"),
-                        rs.getString("creationDate")));
-            }
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String stringResponse = response.body();
+            JSONObject costObj = new JSONObject(stringResponse);
+            result = new Cost(
+                    costObj.getString("costId"),
+                    costObj.getString("userId"),
+                    costObj.getString("categoryId"),
+                    costObj.getDouble("sum"),
+                    costObj.getString("currencyId"),
+                    costObj.getString("description"),
+                    costObj.getString("creationDate")
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        return resultList.size() > 0 ? resultList.get(0) : new Cost();
+        return result;
     }
 
     @Override
-    public void add(Cost obj) throws CostManagerException {
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
+    public void add(Cost obj) throws CostManagerException, JsonProcessingException {
 
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(obj);
+
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/costs"))
+                .setHeader("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
         try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
-            statement = connection.prepareStatement("INSERT INTO costs VALUES(?, ?, ?, ?, ?, ?, ?)");
-
-            statement.setString(1, obj.getCostId());
-            statement.setString(2, obj.getUserId());
-            statement.setString(3, obj.getCategoryId());
-            statement.setDouble(4, obj.getSum());
-            statement.setString(5, obj.getCurrencyId());
-            statement.setString(6, obj.getDescription());
-            statement.setString(7, obj.getCreationDate());
-
-            statement.addBatch();
-            statement.executeBatch();
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            int status = response.statusCode();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -20,42 +20,12 @@ import java.net.http.HttpResponse;
 
 public class CurrencyModel implements IModel<Currency> {
 
-    final static String API_URL = "http://localhost:8080/currencies/";
-
-    private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) {
-        if(connection!=null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        if(rs!=null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        if(statement!=null) {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public CurrencyModel() throws ClassNotFoundException {
-        Class.forName(driver);
-    }
-
     @Override
     public List<Currency> getAll() throws CostManagerException {
 
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL))
+                .uri(URI.create(api_url + "/currencies"))
                 .GET()
                 .build();
 
@@ -87,7 +57,7 @@ public class CurrencyModel implements IModel<Currency> {
     public Currency getById(String currencyId) throws CostManagerException {
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + currencyId))
+                .uri(URI.create(api_url + "/currencies/" + currencyId))
                 .GET()
                 .build();
 
@@ -118,7 +88,7 @@ public class CurrencyModel implements IModel<Currency> {
 
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL))
+                .uri(URI.create(api_url + "/currencies"))
                 .setHeader("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();

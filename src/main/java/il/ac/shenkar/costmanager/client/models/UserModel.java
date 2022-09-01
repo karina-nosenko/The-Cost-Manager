@@ -1,124 +1,105 @@
 package il.ac.shenkar.costmanager.client.models;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import il.ac.shenkar.costmanager.CostManagerException;
+import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.User;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
 public class UserModel implements IModel<User> {
 
-    private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) {
-        if(connection!=null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        if(rs!=null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        if(statement!=null) {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public UserModel() throws ClassNotFoundException {
-        Class.forName(driver);
-    }
-
     @Override
     public List<User> getAll() throws CostManagerException {
 
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        List<User> resultList = new LinkedList<>();
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/users"))
+                .GET()
+                .build();
 
+        List<User> result = new LinkedList<>();
         try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String stringResponse = response.body();
+            JSONArray jsonArray = new JSONArray(stringResponse);
 
-            statement = connection.prepareStatement("SELECT userId, username, email, password FROM users");
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                resultList.add(new User(rs.getString("userId"),rs.getString("username"),rs.getString("email"),rs.getString("password")));
+            for (int i=0; i< jsonArray.length(); i++) {
+                JSONObject userObj = jsonArray.getJSONObject(i);
+                User user = new User(
+                        userObj.getString("userId"),
+                        userObj.getString("username"),
+                        userObj.getString("email"),
+                        userObj.getString("password")
+                );
+                result.add(user);
             }
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        return resultList;
+        return result;
     }
 
     @Override
-    public User getById(String id) throws CostManagerException {
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
-        List<User> resultList = new LinkedList<>();
+    public User getById(String categoryId) throws CostManagerException {
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/users/" + categoryId))
+                .GET()
+                .build();
 
+        User result = new User();
         try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
-            statement = connection.prepareStatement("SELECT userId, username, email, password FROM users WHERE userId = ?");
-
-            statement.setString(1, id);
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                resultList.add(new User(rs.getString("userId"),rs.getString("username"),rs.getString("email"),rs.getString("password")));
-            }
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String stringResponse = response.body();
+            JSONObject userObj = new JSONObject(stringResponse);
+            result = new User(
+                    userObj.getString("userId"),
+                    userObj.getString("username"),
+                    userObj.getString("email"),
+                    userObj.getString("password")
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        return resultList.size() > 0 ? resultList.get(0) : new User();
+        return result;
     }
 
     @Override
-    public void add(User obj) throws CostManagerException {
-        Connection connection = null;
-        ResultSet rs = null;
-        PreparedStatement statement = null;
+    public void add(User obj) throws CostManagerException, JsonProcessingException {
 
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(obj);
+
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/users"))
+                .setHeader("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
         try {
-            connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
-            statement = connection.prepareStatement("INSERT INTO users VALUES(?, ?, ?, ?)");
-
-            statement.setString(1, obj.getUserId());
-            statement.setString(2, obj.getUsername());
-            statement.setString(3, obj.getEmail());
-            statement.setString(4, obj.getPassword());
-
-            statement.addBatch();
-            statement.executeBatch();
-        } catch (SQLException e) {
-            throw new CostManagerException(e.getMessage());
-        }
-        finally {
-            closeConnections(connection, rs, statement);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            int status = response.statusCode();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

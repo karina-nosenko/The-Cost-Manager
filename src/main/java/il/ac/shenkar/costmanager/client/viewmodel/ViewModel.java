@@ -107,6 +107,8 @@ public class ViewModel implements IViewModel {
                 categoryModel.add(category);
             } catch (CostManagerException e) {
                 throw new RuntimeException(e);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
             }
 
             getCategories();
@@ -119,6 +121,8 @@ public class ViewModel implements IViewModel {
             try {
                 costModel.add(cost);
             } catch (CostManagerException e) {
+                throw new RuntimeException(e);
+            } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
 
