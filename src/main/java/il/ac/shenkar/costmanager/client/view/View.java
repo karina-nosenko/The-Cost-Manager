@@ -518,27 +518,49 @@ public class View implements IView {
         }
 
         for (var cost : costs) {
-            JTextArea costPanel = new JTextArea();
-            costPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
-            costPanel.setBackground(Color.decode("#F3F1F1"));
-            costPanel.setPreferredSize(new Dimension(800, 60));
-            costPanel.setBorder(new EmptyBorder(20, 10, 10, 10));
-
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append(cost.getCategoryId());
-            stringBuffer.append("\t\t");
+            stringBuffer.append("\t");
             stringBuffer.append(cost.getSum());
             stringBuffer.append(" ");
             stringBuffer.append(cost.getCurrencyId());
-            stringBuffer.append("\t\t");
-            stringBuffer.append(cost.getDescription());
+            stringBuffer.append("\t");
+            stringBuffer.append(normalizeLength(cost.getDescription(), 80));
 
-            costPanel.setText(stringBuffer.toString());
+            JTextArea costArea = new JTextArea();
+            costArea.setLayout(new FlowLayout(FlowLayout.LEADING));
+            costArea.setBackground(Color.decode("#F3F1F1"));
+            costArea.setPreferredSize(new Dimension(640, 60));
+            costArea.setBorder(new EmptyBorder(20, 20, 10, 10));
+            costArea.setText(stringBuffer.toString());
+
+            JTextArea datePanel = new JTextArea(cost.getCreationDate());
+            datePanel.setPreferredSize(new Dimension(160, 60));
+            datePanel.setBackground(Color.decode("#F3F1F1"));
+            datePanel.setBorder(new EmptyBorder(20, 10, 10, 10));
+
+            JPanel costPanel = new JPanel();
+            costPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+            costPanel.add(costArea);
+            costPanel.add(datePanel);
+            costPanel.setBackground(Color.decode("#F3F1F1"));
+
             costsList.add(costPanel);
         }
 
         costsList.revalidate();
         costsList.repaint();
+    }
+
+    String normalizeLength(String text, int maxLength) {
+
+        if (maxLength >= 3 && text.length() > maxLength) {
+            text = text.substring(0, maxLength-3);
+            text += "...";
+
+        }
+
+        return text;
     }
 
     @Override
