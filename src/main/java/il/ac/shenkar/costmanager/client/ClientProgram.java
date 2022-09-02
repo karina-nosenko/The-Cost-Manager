@@ -12,7 +12,7 @@ import il.ac.shenkar.costmanager.client.viewmodel.ViewModel;
 import javax.swing.*;
 
 public class ClientProgram {
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) {
 
         UserModel userModel = new UserModel();
         CurrencyModel currencyModel = new CurrencyModel();

@@ -1,5 +1,8 @@
 package il.ac.shenkar.costmanager.client.view;
 
+import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.github.lgooddatepicker.tableeditors.DateTableEditor;
+import com.toedter.calendar.JDateChooser;
 import il.ac.shenkar.costmanager.client.viewmodel.IViewModel;
 import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.Cost;
@@ -11,9 +14,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class View implements IView {
 
@@ -26,7 +27,7 @@ public class View implements IView {
     JComboBox currenciesBox;
     JComboBox categoriesBox;
     JTextArea categoriesList;
-    JPanel costsList;
+    JPanel costsList, datesFilterPanel;
     JLabel emptyCostsMessage;
 
     public View() {
@@ -159,6 +160,26 @@ public class View implements IView {
     }
 
     void buildMyCostsScreen() {
+
+        // build the date picker
+        JLabel fromLabel = new JLabel("From:");
+        JDateChooser fromDateChooser = new JDateChooser();
+        fromDateChooser.setDateFormatString("YYY-MM-dd");
+        fromDateChooser.setPreferredSize(new Dimension(100, 30));
+
+        JLabel toLabel = new JLabel("To:");
+        toLabel.setBorder(new EmptyBorder(0, 20, 0, 0));
+        JDateChooser toDateChooser = new JDateChooser();
+        toDateChooser.setDateFormatString("YYY-MM-dd");
+        toDateChooser.setPreferredSize(new Dimension(100, 30));
+
+        datesFilterPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+        datesFilterPanel.setBorder(new EmptyBorder(0, 0, 30, 0));
+        datesFilterPanel.setBackground(Color.WHITE);
+        datesFilterPanel.add(fromLabel);
+        datesFilterPanel.add(fromDateChooser);
+        datesFilterPanel.add(toLabel);
+        datesFilterPanel.add(toDateChooser);
 
         // building the costs list
         costsList.setPreferredSize(new Dimension(800, 480));
@@ -482,6 +503,8 @@ public class View implements IView {
 
         costsList.removeAll();
 
+        costsList.add(datesFilterPanel);
+
         if (costs.size() == 0) {
             JLabel emptyMessage = generateLabel("Empty List", 70, 30);
             costsList.add(emptyMessage);
@@ -582,6 +605,7 @@ public class View implements IView {
         categoriesList = new JTextArea();
         costsList = new JPanel();
         emptyCostsMessage = new JLabel("Empty List.");
+        datesFilterPanel = new JPanel();
 
         // setting cards
         screen.add(screenMyCosts, "MyCosts");
