@@ -165,13 +165,19 @@ public class View implements IView {
         JLabel fromLabel = new JLabel("From:");
         JDateChooser fromDateChooser = new JDateChooser();
         fromDateChooser.setDateFormatString("YYY-MM-dd");
-        fromDateChooser.setPreferredSize(new Dimension(100, 30));
+        fromDateChooser.setPreferredSize(new Dimension(110, 30));
+        fromDateChooser.setBackground(Color.WHITE);
 
         JLabel toLabel = new JLabel("To:");
         toLabel.setBorder(new EmptyBorder(0, 20, 0, 0));
         JDateChooser toDateChooser = new JDateChooser();
         toDateChooser.setDateFormatString("YYY-MM-dd");
-        toDateChooser.setPreferredSize(new Dimension(100, 30));
+        toDateChooser.setPreferredSize(new Dimension(130, 30));
+        toDateChooser.setBackground(Color.WHITE);
+        toDateChooser.setBorder(new EmptyBorder(0, 0, 0, 20));
+
+        JButton filterButton = new JButton("Filter");
+        filterButton.setBackground(Color.decode("#F5F5F5"));
 
         datesFilterPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         datesFilterPanel.setBorder(new EmptyBorder(0, 0, 30, 0));
@@ -180,6 +186,7 @@ public class View implements IView {
         datesFilterPanel.add(fromDateChooser);
         datesFilterPanel.add(toLabel);
         datesFilterPanel.add(toDateChooser);
+        datesFilterPanel.add(filterButton);
 
         // building the costs list
         costsList.setPreferredSize(new Dimension(800, 480));
