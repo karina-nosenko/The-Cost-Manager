@@ -1,8 +1,6 @@
 package il.ac.shenkar.costmanager.client.models;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import il.ac.shenkar.costmanager.CostManagerException;
-import il.ac.shenkar.costmanager.entities.Currency;
 
 import java.util.List;
 

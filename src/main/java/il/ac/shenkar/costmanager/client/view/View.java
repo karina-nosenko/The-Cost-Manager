@@ -1,7 +1,5 @@
 package il.ac.shenkar.costmanager.client.view;
 
-import com.github.lgooddatepicker.components.DatePickerSettings;
-import com.github.lgooddatepicker.tableeditors.DateTableEditor;
 import com.toedter.calendar.JDateChooser;
 import il.ac.shenkar.costmanager.client.viewmodel.IViewModel;
 import il.ac.shenkar.costmanager.entities.Category;
@@ -282,9 +280,10 @@ public class View implements IView {
         // handling events
         saveButton.addActionListener(e -> {
 
-            // do nothing if the sum is empty
+            // display message if the sum is empty
             String sum = sumField.getText();
             if (sum.isEmpty() || sum.isBlank()) {
+                displayMessage("Please add the sum of the cost", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
@@ -353,9 +352,10 @@ public class View implements IView {
         // handling events
         addButton.addActionListener(e -> {
 
-            // do nothing if the name field is empty
+            // display message if the name field empty
             String newCategoryName = nameField.getText();
             if (newCategoryName.isBlank() || newCategoryName.isEmpty()) {
+                displayMessage("Please add the category name", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
@@ -597,6 +597,12 @@ public class View implements IView {
         }
 
         return text;
+    }
+
+    @Override
+    public void displayMessage(String message, int option) {
+
+        JOptionPane.showMessageDialog(frame, message, "Cost Manager", option);
     }
 
     @Override

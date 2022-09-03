@@ -62,7 +62,9 @@ public class ViewModel implements IViewModel {
                     view.setCurrencies(viewCurrencies);
                 });
             } catch (CostManagerException e) {
-                // TODO: VIEW MSG
+                SwingUtilities.invokeLater(() -> {
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR);
+                });
             }
         });
     }
@@ -78,7 +80,9 @@ public class ViewModel implements IViewModel {
                     view.setCategories(viewCategories);
                 });
             } catch (CostManagerException e) {
-                // TODO: VIEW MSG
+                SwingUtilities.invokeLater(() -> {
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR);
+                });
             }
         });
 
@@ -113,7 +117,9 @@ public class ViewModel implements IViewModel {
                     view.setCosts(filteredCosts);
                 });
             } catch (CostManagerException e) {
-                // TODO: VIEW MSG
+                SwingUtilities.invokeLater(() -> {
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR);
+                });
             }
         });
 
@@ -126,7 +132,9 @@ public class ViewModel implements IViewModel {
             try {
                 categoryModel.add(category);
             } catch (CostManagerException e) {
-                // TODO: VIEW MSG
+                SwingUtilities.invokeLater(() -> {
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR);
+                });
             }
 
             getCategories();
@@ -139,7 +147,9 @@ public class ViewModel implements IViewModel {
             try {
                 costModel.add(cost);
             } catch (CostManagerException e) {
-                // TODO: VIEW MSG
+                SwingUtilities.invokeLater(() -> {
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR);
+                });
             }
 
             getCosts(null, null);

@@ -2,9 +2,7 @@ package il.ac.shenkar.costmanager.server.controllers;
 
 import il.ac.shenkar.costmanager.CostManagerException;
 import il.ac.shenkar.costmanager.entities.Category;
-import il.ac.shenkar.costmanager.entities.Currency;
 import il.ac.shenkar.costmanager.server.models.CategoryModel;
-import il.ac.shenkar.costmanager.server.models.CurrencyModel;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
