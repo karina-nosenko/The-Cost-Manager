@@ -1,6 +1,5 @@
 package il.ac.shenkar.costmanager.client.viewmodel;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import il.ac.shenkar.costmanager.CostManagerException;
 import il.ac.shenkar.costmanager.client.models.IModel;
 import il.ac.shenkar.costmanager.client.models.CategoryModel;
@@ -12,12 +11,8 @@ import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.Cost;
 import il.ac.shenkar.costmanager.entities.Currency;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import javax.swing.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -59,38 +54,43 @@ public class ViewModel implements IViewModel {
     @Override
     public void getCurrencies() {
         service.submit(() -> {
-            List<Currency> currencies;
             try {
-                currencies = currencyModel.getAll();
-            } catch (CostManagerException e) {
-                throw new RuntimeException(e);
-            }
+                List<Currency> currencies = currencyModel.getAll();
 
-            view.setCurrencies(currencies);
+                List<Currency> viewCurrencies = currencies;
+                SwingUtilities.invokeLater(() -> {
+                    view.setCurrencies(viewCurrencies);
+                });
+            } catch (CostManagerException e) {
+                // TODO: VIEW MSG
+            }
         });
     }
 
     @Override
     public void getCategories() {
         service.submit(() -> {
-            List<Category> categories;
             try {
-                categories = categoryModel.getByUserId("91966493-d06c-4593-bdb2-0fb1a084b6f8");
-            } catch (CostManagerException e) {
-                throw new RuntimeException(e);
-            }
+                List<Category> categories = categoryModel.getByUserId("91966493-d06c-4593-bdb2-0fb1a084b6f8");
 
-            view.setCategories(categories);
+                List<Category> viewCategories = categories;
+                SwingUtilities.invokeLater(() -> {
+                    view.setCategories(viewCategories);
+                });
+            } catch (CostManagerException e) {
+                // TODO: VIEW MSG
+            }
         });
+
+        SwingUtilities.invokeLater(() -> {});
     }
 
     @Override
     public void getCosts(LocalDate from, LocalDate to) {
         service.submit(() -> {
-            List<Cost> costs;
             List<Cost> filteredCosts = new LinkedList<>();
             try {
-                costs = costModel.getByUserId("91966493-d06c-4593-bdb2-0fb1a084b6f8");
+                List<Cost> costs = costModel.getByUserId("91966493-d06c-4593-bdb2-0fb1a084b6f8");
                 for (var cost : costs) {
                     String creationDateString = cost.getCreationDate();
                     LocalDate creationDate = LocalDate.parse(creationDateString);
@@ -107,13 +107,17 @@ public class ViewModel implements IViewModel {
                         filteredCosts.add(cost);
                     }
                 }
-            } catch (CostManagerException e) {
-                throw new RuntimeException(e);
-            }
 
-            view.setCostsSize(costs.size(), filteredCosts.size());
-            view.setCosts(filteredCosts);
+                SwingUtilities.invokeLater(() -> {
+                    view.setCostsSize(costs.size(), filteredCosts.size());
+                    view.setCosts(filteredCosts);
+                });
+            } catch (CostManagerException e) {
+                // TODO: VIEW MSG
+            }
         });
+
+        SwingUtilities.invokeLater(() -> {});
     }
 
     @Override
@@ -122,9 +126,7 @@ public class ViewModel implements IViewModel {
             try {
                 categoryModel.add(category);
             } catch (CostManagerException e) {
-                throw new RuntimeException(e);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                // TODO: VIEW MSG
             }
 
             getCategories();
@@ -137,9 +139,7 @@ public class ViewModel implements IViewModel {
             try {
                 costModel.add(cost);
             } catch (CostManagerException e) {
-                throw new RuntimeException(e);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                // TODO: VIEW MSG
             }
 
             getCosts(null, null);

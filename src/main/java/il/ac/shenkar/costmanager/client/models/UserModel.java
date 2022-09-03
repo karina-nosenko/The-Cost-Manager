@@ -3,7 +3,6 @@ package il.ac.shenkar.costmanager.client.models;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import il.ac.shenkar.costmanager.CostManagerException;
-import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,7 +12,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,9 +43,9 @@ public class UserModel implements IModel<User> {
                 result.add(user);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
 
         return result;
@@ -61,7 +59,7 @@ public class UserModel implements IModel<User> {
                 .GET()
                 .build();
 
-        User result = new User();
+        User result;
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String stringResponse = response.body();
@@ -73,19 +71,24 @@ public class UserModel implements IModel<User> {
                     userObj.getString("password")
             );
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
 
         return result;
     }
 
     @Override
-    public void add(User obj) throws CostManagerException, JsonProcessingException {
+    public void add(User obj) throws CostManagerException {
 
         var objectMapper = new ObjectMapper();
-        String requestBody = objectMapper.writeValueAsString(obj);
+        String requestBody = null;
+        try {
+            requestBody = objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new CostManagerException(e.toString());
+        }
 
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
@@ -97,9 +100,9 @@ public class UserModel implements IModel<User> {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             int status = response.statusCode();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
     }
 }

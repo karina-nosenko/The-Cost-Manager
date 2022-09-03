@@ -9,32 +9,36 @@ import java.util.List;
 
 public class CurrencyModel implements IModel<Currency> {
 
-    private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) {
+    private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) throws CostManagerException {
         if(connection!=null) {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new CostManagerException(e.getMessage());
             }
         }
         if(rs!=null) {
             try {
                 rs.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new CostManagerException(e.getMessage());
             }
         }
         if(statement!=null) {
             try {
                 statement.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new CostManagerException(e.getMessage());
             }
         }
     }
 
-    public CurrencyModel() throws ClassNotFoundException {
-        Class.forName(driver);
+    public CurrencyModel() throws CostManagerException {
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            throw new CostManagerException(e.getMessage());
+        }
     }
 
     @Override

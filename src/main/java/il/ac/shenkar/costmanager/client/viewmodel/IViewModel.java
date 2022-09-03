@@ -9,7 +9,6 @@ import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.Cost;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public interface IViewModel {
 

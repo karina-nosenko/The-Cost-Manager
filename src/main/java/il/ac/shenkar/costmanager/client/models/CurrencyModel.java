@@ -7,8 +7,6 @@ import il.ac.shenkar.costmanager.entities.Currency;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.net.http.HttpHeaders;
-import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,9 +43,9 @@ public class CurrencyModel implements IModel<Currency> {
                 result.add(currency);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
 
         return result;
@@ -61,7 +59,7 @@ public class CurrencyModel implements IModel<Currency> {
                 .GET()
                 .build();
 
-        Currency result = new Currency();
+        Currency result;
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String stringResponse = response.body();
@@ -72,19 +70,24 @@ public class CurrencyModel implements IModel<Currency> {
                     currencyObj.getDouble("rate")
             );
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
 
         return result;
     }
 
     @Override
-    public void add(Currency obj) throws CostManagerException, JsonProcessingException {
+    public void add(Currency obj) throws CostManagerException {
 
         var objectMapper = new ObjectMapper();
-        String requestBody = objectMapper.writeValueAsString(obj);
+        String requestBody = null;
+        try {
+            requestBody = objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new CostManagerException(e.toString());
+        }
 
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
@@ -96,9 +99,9 @@ public class CurrencyModel implements IModel<Currency> {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             int status = response.statusCode();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
     }
 }

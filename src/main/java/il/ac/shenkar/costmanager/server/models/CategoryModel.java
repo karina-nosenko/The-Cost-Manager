@@ -9,32 +9,36 @@ import java.util.List;
 
 public class CategoryModel implements IModel<Category> {
 
-    private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) {
+    private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) throws CostManagerException {
         if(connection!=null) {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new CostManagerException(e.getMessage());
             }
         }
         if(rs!=null) {
             try {
                 rs.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new CostManagerException(e.getMessage());
             }
         }
         if(statement!=null) {
             try {
                 statement.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new CostManagerException(e.getMessage());
             }
         }
     }
 
-    public CategoryModel() throws ClassNotFoundException {
-        Class.forName(driver);
+    public CategoryModel() throws CostManagerException {
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            throw new CostManagerException(e.getMessage());
+        }
     }
 
     public List<Category> getByUserId(String userId) throws CostManagerException {

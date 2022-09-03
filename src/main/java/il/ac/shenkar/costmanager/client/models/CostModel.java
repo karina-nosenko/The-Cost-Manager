@@ -45,9 +45,9 @@ public class CostModel implements IModel<Cost> {
                 result.add(cost);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
 
         return result;
@@ -82,9 +82,9 @@ public class CostModel implements IModel<Cost> {
                 result.add(cost);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
 
         return result;
@@ -98,7 +98,7 @@ public class CostModel implements IModel<Cost> {
                 .GET()
                 .build();
 
-        Cost result = new Cost();
+        Cost result;
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String stringResponse = response.body();
@@ -113,19 +113,24 @@ public class CostModel implements IModel<Cost> {
                     costObj.getString("creationDate")
             );
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
 
         return result;
     }
 
     @Override
-    public void add(Cost obj) throws CostManagerException, JsonProcessingException {
+    public void add(Cost obj) throws CostManagerException {
 
         var objectMapper = new ObjectMapper();
-        String requestBody = objectMapper.writeValueAsString(obj);
+        String requestBody = null;
+        try {
+            requestBody = objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new CostManagerException(e.toString());
+        }
 
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
@@ -137,9 +142,9 @@ public class CostModel implements IModel<Cost> {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             int status = response.statusCode();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
     }
 }

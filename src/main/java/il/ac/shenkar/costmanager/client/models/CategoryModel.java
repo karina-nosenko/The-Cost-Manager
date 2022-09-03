@@ -43,9 +43,9 @@ public class CategoryModel implements IModel<Category> {
                 result.add(category);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
 
         return result;
@@ -76,9 +76,9 @@ public class CategoryModel implements IModel<Category> {
                 result.add(category);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
 
         return result;
@@ -103,19 +103,24 @@ public class CategoryModel implements IModel<Category> {
                     categoryObj.getString("name")
             );
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
 
         return result;
     }
 
     @Override
-    public void add(Category obj) throws CostManagerException, JsonProcessingException {
+    public void add(Category obj) throws CostManagerException {
 
         var objectMapper = new ObjectMapper();
-        String requestBody = objectMapper.writeValueAsString(obj);
+        String requestBody = null;
+        try {
+            requestBody = objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new CostManagerException(e.toString());
+        }
 
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
@@ -127,9 +132,9 @@ public class CategoryModel implements IModel<Category> {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             int status = response.statusCode();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new CostManagerException(e.getMessage());
         }
     }
 }
