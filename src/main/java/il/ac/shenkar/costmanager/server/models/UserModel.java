@@ -41,6 +41,36 @@ public class UserModel implements IModel<User> {
         }
     }
 
+    public User login(String email, String password) throws CostManagerException {
+
+        Connection connection = null;
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        List<User> resultList = new LinkedList<>();
+
+        try {
+            connection = DriverManager.getConnection(connectionString, db_user, db_password);
+
+            statement = connection.prepareStatement("SELECT userId, username, email, password FROM users WHERE email = ? AND password = ?");
+            statement.setString(1, email);
+            statement.setString(2, password);
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                resultList.add(new User(rs.getString("userId"),rs.getString("username"),rs.getString("email"),rs.getString("password")));
+            }
+        } catch (SQLException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+        finally {
+            closeConnections(connection, rs, statement);
+        }
+
+        return resultList.size() > 0 ? resultList.get(0) : null;
+    }
+
     @Override
     public List<User> getAll() throws CostManagerException {
 

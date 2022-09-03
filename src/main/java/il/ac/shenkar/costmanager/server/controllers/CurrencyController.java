@@ -16,28 +16,28 @@ public class CurrencyController {
     }
 
     @GetMapping("/currencies")
-    public List<Currency> getAll() throws ClassNotFoundException, CostManagerException {
+    public List<Currency> getAll() throws CostManagerException {
 
         CurrencyModel currencyModel = new CurrencyModel();
         return currencyModel.getAll();
     }
 
     @GetMapping("/currencies/{currencyId}")
-    public Currency getById(@PathVariable("currencyId") String currencyId) throws ClassNotFoundException, CostManagerException {
+    public Currency getById(@PathVariable("currencyId") String currencyId) throws CostManagerException {
 
         CurrencyModel currencyModel = new CurrencyModel();
         return currencyModel.getById(currencyId);
     }
 
     @PostMapping("/currencies")
-    public void add(@RequestBody Currency currencyObj) throws ClassNotFoundException, CostManagerException {
+    public void add(@RequestBody Currency currencyObj) throws CostManagerException {
 
         CurrencyModel currencyModel = new CurrencyModel();
         currencyModel.add(currencyObj);
     }
 
     @DeleteMapping("/currencies/{currencyId}")
-    public void delete(@PathVariable("currencyId") String currencyId) throws ClassNotFoundException, CostManagerException {
+    public void delete(@PathVariable("currencyId") String currencyId) throws CostManagerException {
 
         CurrencyModel currencyModel = new CurrencyModel();
         currencyModel.delete(currencyId);

@@ -11,35 +11,35 @@ import java.util.List;
 public class CategoryController {
 
     @GetMapping("/categories")
-    public List<Category> getAll() throws ClassNotFoundException, CostManagerException {
+    public List<Category> getAll() throws CostManagerException {
 
         CategoryModel categoryModel = new CategoryModel();
         return categoryModel.getAll();
     }
 
     @GetMapping("/categories/users/{userId}")
-    public List<Category> getByUserId(@PathVariable("userId") String userId) throws ClassNotFoundException, CostManagerException {
+    public List<Category> getByUserId(@PathVariable("userId") String userId) throws CostManagerException {
 
         CategoryModel categoryModel = new CategoryModel();
         return categoryModel.getByUserId(userId);
     }
 
     @GetMapping("/categories/{categoryId}")
-    public Category getById(@PathVariable("categoryId") String categoryId) throws ClassNotFoundException, CostManagerException {
+    public Category getById(@PathVariable("categoryId") String categoryId) throws CostManagerException {
 
         CategoryModel categoryModel = new CategoryModel();
         return categoryModel.getById(categoryId);
     }
 
     @PostMapping("/categories")
-    public void add(@RequestBody Category categoryObj) throws ClassNotFoundException, CostManagerException {
+    public void add(@RequestBody Category categoryObj) throws CostManagerException {
 
         CategoryModel categoryModel = new CategoryModel();
         categoryModel.add(categoryObj);
     }
 
     @DeleteMapping("/categories/{categoryId}")
-    public void delete(@PathVariable("categoryId") String categoryId) throws ClassNotFoundException, CostManagerException {
+    public void delete(@PathVariable("categoryId") String categoryId) throws CostManagerException {
 
         CategoryModel categoryModel = new CategoryModel();
         categoryModel.delete(categoryId);

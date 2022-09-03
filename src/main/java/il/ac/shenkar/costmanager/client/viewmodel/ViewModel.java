@@ -10,6 +10,7 @@ import il.ac.shenkar.costmanager.client.view.IView;
 import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.Cost;
 import il.ac.shenkar.costmanager.entities.Currency;
+import il.ac.shenkar.costmanager.entities.User;
 
 import javax.swing.*;
 import java.time.LocalDate;
@@ -52,6 +53,30 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
+    public void loginUser(String email, String password) {
+        final User[] user = new User[1];
+        service.submit(() -> {
+            try {
+                user[0] = userModel.login(email, password); // here it falls when the username or password are wrong
+
+                if (user[0] == null) {
+                    SwingUtilities.invokeLater(() -> {
+                        view.displayMessage("Invalid email or password", JOptionPane.ERROR_MESSAGE);
+                    });
+                } else {
+                    SwingUtilities.invokeLater(() -> {
+                        view.loginUser();
+                    });
+                }
+            } catch (CostManagerException e) {
+                SwingUtilities.invokeLater(() -> {
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
+                });
+            }
+        });
+    }
+
+    @Override
     public void getCurrencies() {
         service.submit(() -> {
             try {
@@ -63,7 +88,7 @@ public class ViewModel implements IViewModel {
                 });
             } catch (CostManagerException e) {
                 SwingUtilities.invokeLater(() -> {
-                    view.displayMessage(e.getMessage(), JOptionPane.ERROR);
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
                 });
             }
         });
@@ -81,7 +106,7 @@ public class ViewModel implements IViewModel {
                 });
             } catch (CostManagerException e) {
                 SwingUtilities.invokeLater(() -> {
-                    view.displayMessage(e.getMessage(), JOptionPane.ERROR);
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
                 });
             }
         });
@@ -118,7 +143,7 @@ public class ViewModel implements IViewModel {
                 });
             } catch (CostManagerException e) {
                 SwingUtilities.invokeLater(() -> {
-                    view.displayMessage(e.getMessage(), JOptionPane.ERROR);
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
                 });
             }
         });
@@ -133,7 +158,7 @@ public class ViewModel implements IViewModel {
                 categoryModel.add(category);
             } catch (CostManagerException e) {
                 SwingUtilities.invokeLater(() -> {
-                    view.displayMessage(e.getMessage(), JOptionPane.ERROR);
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
                 });
             }
 
@@ -148,7 +173,7 @@ public class ViewModel implements IViewModel {
                 costModel.add(cost);
             } catch (CostManagerException e) {
                 SwingUtilities.invokeLater(() -> {
-                    view.displayMessage(e.getMessage(), JOptionPane.ERROR);
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
                 });
             }
 

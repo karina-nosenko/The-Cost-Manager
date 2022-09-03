@@ -407,11 +407,9 @@ public class View implements IView {
 
         // handling events
         submitButton.addActionListener(e -> {
-            cards.show(screen, "MyCosts");
-            topPanels.show(panelTop, "TopLogout");
-            rightPanels.show(panelRight, "RightAuthorized");
-
-            addItemsFromModel();
+            String email = emailField.getText();
+            String password = String.valueOf(passwordField.getPassword());
+            vm.loginUser(email, password);
         });
     }
 
@@ -603,6 +601,15 @@ public class View implements IView {
     public void displayMessage(String message, int option) {
 
         JOptionPane.showMessageDialog(frame, message, "Cost Manager", option);
+    }
+
+    @Override
+    public void loginUser() {
+        cards.show(screen, "MyCosts");
+        topPanels.show(panelTop, "TopLogout");
+        rightPanels.show(panelRight, "RightAuthorized");
+
+        addItemsFromModel();
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.util.List;
 public interface IView {
 
     public void displayMessage(String message, int option);
+    public void loginUser();
     public void setViewModel(IViewModel ob);
     public void setCategories(List<Category> categories);
     public void setCosts(List<Cost> costs);

@@ -17,6 +17,48 @@ import java.util.List;
 
 public class UserModel implements IModel<User> {
 
+    public User login(String email, String password) throws CostManagerException {
+
+        var authObj = new User(null, null, email, password);
+        var objectMapper = new ObjectMapper();
+        String requestBody = null;
+        try {
+            requestBody = objectMapper.writeValueAsString(authObj);
+        } catch (JsonProcessingException e) {
+            throw new CostManagerException(e.toString());
+        }
+
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/auth/login"))
+                .setHeader("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        User result;
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String stringResponse = response.body();
+            if (stringResponse.isEmpty()) {
+                result = null;
+            } else {
+                JSONObject userObj = new JSONObject(stringResponse);
+                result = new User(
+                        userObj.getString("userId"),
+                        userObj.getString("username"),
+                        userObj.getString("email"),
+                        userObj.getString("password")
+                );
+            }
+        } catch (IOException e) {
+            throw new CostManagerException(e.getMessage());
+        } catch (InterruptedException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+
+        return result;
+    }
+
     @Override
     public List<User> getAll() throws CostManagerException {
 
