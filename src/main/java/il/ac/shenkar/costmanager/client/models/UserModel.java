@@ -59,6 +59,36 @@ public class UserModel implements IModel<User> {
         return result;
     }
 
+    public void logup(String username, String email, String password) throws CostManagerException {
+
+        var obj = new User(null, username, email, password);
+        var objectMapper = new ObjectMapper();
+        String requestBody = null;
+        try {
+            requestBody = objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new CostManagerException(e.toString());
+        }
+
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/auth/logup"))
+                .setHeader("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        try {
+            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if(response.statusCode() != 200) {
+                throw new CostManagerException("User with this email already exists");
+            }
+        } catch (IOException e) {
+            throw new CostManagerException(e.getMessage());
+        } catch (InterruptedException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+    }
+
     @Override
     public List<User> getAll() throws CostManagerException {
 
@@ -139,8 +169,7 @@ public class UserModel implements IModel<User> {
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
         try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            int status = response.statusCode();
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
             throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {

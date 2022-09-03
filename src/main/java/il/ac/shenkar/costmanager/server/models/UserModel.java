@@ -71,6 +71,41 @@ public class UserModel implements IModel<User> {
         return resultList.size() > 0 ? resultList.get(0) : null;
     }
 
+    public void logup(User user) throws CostManagerException {
+
+        Connection connection = null;
+        ResultSet rs = null;
+        PreparedStatement statement = null;
+        List<User> resultList = new LinkedList<>();
+
+        try {
+            connection = DriverManager.getConnection(connectionString, db_user, db_password);
+
+            // check whether user with the given email already exists
+            statement = connection.prepareStatement("SELECT userId, username, email, password FROM users WHERE email = ?");
+            statement.setString(1, user.getEmail());
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                resultList.add(new User(rs.getString("userId"),rs.getString("username"),rs.getString("email"),rs.getString("password")));
+            }
+
+            if (resultList.size() > 0) {
+                throw new CostManagerException("User with this email already exists");
+            }
+
+            // add the new user
+            add(user);
+        } catch (SQLException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+        finally {
+            closeConnections(connection, rs, statement);
+        }
+    }
+
     @Override
     public List<User> getAll() throws CostManagerException {
 

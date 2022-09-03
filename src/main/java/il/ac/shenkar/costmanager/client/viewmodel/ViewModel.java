@@ -57,7 +57,7 @@ public class ViewModel implements IViewModel {
         final User[] user = new User[1];
         service.submit(() -> {
             try {
-                user[0] = userModel.login(email, password); // here it falls when the username or password are wrong
+                user[0] = userModel.login(email, password);
 
                 if (user[0] == null) {
                     SwingUtilities.invokeLater(() -> {
@@ -68,6 +68,22 @@ public class ViewModel implements IViewModel {
                         view.loginUser();
                     });
                 }
+            } catch (CostManagerException e) {
+                SwingUtilities.invokeLater(() -> {
+                    view.displayMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
+                });
+            }
+        });
+    }
+
+    @Override
+    public void logupUser(String username, String email, String password) {
+        service.submit(() -> {
+            try {
+                userModel.logup(username, email, password);
+                SwingUtilities.invokeLater(() -> {
+                    view.logupUser();
+                });
             } catch (CostManagerException e) {
                 SwingUtilities.invokeLater(() -> {
                     view.displayMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);

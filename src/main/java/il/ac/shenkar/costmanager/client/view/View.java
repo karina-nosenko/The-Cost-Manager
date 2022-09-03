@@ -409,7 +409,13 @@ public class View implements IView {
         submitButton.addActionListener(e -> {
             String email = emailField.getText();
             String password = String.valueOf(passwordField.getPassword());
-            vm.loginUser(email, password);
+
+            if (email.isEmpty() || email.isBlank() ||
+                    password.isEmpty() || password.isBlank()) {
+                displayMessage("Fields cannot be empty", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                vm.loginUser(email, password);
+            }
         });
     }
 
@@ -460,11 +466,17 @@ public class View implements IView {
 
         // handling events
         submitButton.addActionListener(e -> {
-            cards.show(screen, "MyCosts");
-            topPanels.show(panelTop, "TopLogout");
-            rightPanels.show(panelRight, "RightAuthorized");
+            String username = usernameField.getText();
+            String email = emailField.getText();
+            String password = String.valueOf(passwordField.getPassword());
 
-            addItemsFromModel();
+            if (username.isEmpty() || username.isBlank() ||
+                    email.isEmpty() || email.isBlank() ||
+                    password.isEmpty() || password.isBlank()) {
+                displayMessage("Fields cannot be empty", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                vm.logupUser(username, email, password);
+            }
         });
     }
 
@@ -605,6 +617,16 @@ public class View implements IView {
 
     @Override
     public void loginUser() {
+        cards.show(screen, "MyCosts");
+        topPanels.show(panelTop, "TopLogout");
+        rightPanels.show(panelRight, "RightAuthorized");
+
+        addItemsFromModel();
+    }
+
+    @Override
+    public void logupUser() {
+
         cards.show(screen, "MyCosts");
         topPanels.show(panelTop, "TopLogout");
         rightPanels.show(panelRight, "RightAuthorized");

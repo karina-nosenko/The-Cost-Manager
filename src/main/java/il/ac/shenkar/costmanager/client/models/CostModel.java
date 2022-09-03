@@ -140,7 +140,6 @@ public class CostModel implements IModel<Cost> {
                 .build();
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            int status = response.statusCode();
         } catch (IOException e) {
             throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {

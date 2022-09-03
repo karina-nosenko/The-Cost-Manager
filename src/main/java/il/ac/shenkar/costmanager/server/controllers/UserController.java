@@ -21,6 +21,13 @@ public class UserController {
         return userModel.login(email, password);
     }
 
+    @PostMapping("/auth/logup")
+    public void logup(@RequestBody User userObj) throws CostManagerException {
+
+        UserModel userModel = new UserModel();
+        userModel.logup(userObj);
+    }
+
     @GetMapping("/users")
     public List<User> getAll() throws CostManagerException {
 
