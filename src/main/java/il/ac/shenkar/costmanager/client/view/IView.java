@@ -15,5 +15,6 @@ public interface IView {
     public void setCosts(List<Cost> costs);
     public void setCurrencies(List<Currency> currencies);
     public void setUsers(List<User> users);
+    void setCostsSize(int size, int filteredSize);
     public void start();
 }

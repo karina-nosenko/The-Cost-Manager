@@ -14,6 +14,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 public class View implements IView {
@@ -28,7 +30,7 @@ public class View implements IView {
     JComboBox categoriesBox;
     JTextArea categoriesList;
     JPanel costsList, datesFilterPanel;
-    JLabel emptyCostsMessage;
+    JLabel emptyCostsMessage, costsSize;
 
     public View() {
 
@@ -163,40 +165,63 @@ public class View implements IView {
 
         // build the date picker
         JLabel fromLabel = new JLabel("From:");
+
         JDateChooser fromDateChooser = new JDateChooser();
-        fromDateChooser.setDateFormatString("YYY-MM-dd");
         fromDateChooser.setPreferredSize(new Dimension(110, 30));
         fromDateChooser.setBackground(Color.WHITE);
 
         JLabel toLabel = new JLabel("To:");
-        toLabel.setBorder(new EmptyBorder(0, 20, 0, 0));
+        toLabel.setBorder(new EmptyBorder(0, 5, 0, 0));
         JDateChooser toDateChooser = new JDateChooser();
-        toDateChooser.setDateFormatString("YYY-MM-dd");
         toDateChooser.setPreferredSize(new Dimension(130, 30));
         toDateChooser.setBackground(Color.WHITE);
         toDateChooser.setBorder(new EmptyBorder(0, 0, 0, 20));
 
         JButton filterButton = new JButton("Filter");
+        filterButton.setPreferredSize(new Dimension(85, 30));
         filterButton.setBackground(Color.decode("#F5F5F5"));
+
+        JButton showAllButton = new JButton("Show All");
+        showAllButton.setPreferredSize(new Dimension(85, 30));
+        showAllButton.setBackground(Color.decode("#F5F5F5"));
+
+        costsSize = new JLabel();
+        costsSize.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        costsSize.setBorder(new EmptyBorder(0, 20, 0, 0));
 
         datesFilterPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         datesFilterPanel.setBorder(new EmptyBorder(0, 0, 30, 0));
         datesFilterPanel.setBackground(Color.WHITE);
         datesFilterPanel.add(fromLabel);
-        datesFilterPanel.add(fromDateChooser);
-        datesFilterPanel.add(toLabel);
         datesFilterPanel.add(toDateChooser);
+        datesFilterPanel.add(toLabel);
+        datesFilterPanel.add(fromDateChooser);
         datesFilterPanel.add(filterButton);
+        datesFilterPanel.add(showAllButton);
+        datesFilterPanel.add(costsSize);
 
         // building the costs list
         costsList.setPreferredSize(new Dimension(800, 480));
         costsList.setBackground(Color.WHITE);
 
-        // building the MY Costs screen
+        // building the My Costs screen
         screenMyCosts.setBackground(Color.WHITE);
         screenMyCosts.setBorder(new EmptyBorder(30, 60, 30, 60));
         screenMyCosts.add(generateHeading("My Costs"), BorderLayout.PAGE_START);
         screenMyCosts.add(costsList, BorderLayout.LINE_START);
+
+        //handling events
+        filterButton.addActionListener(e -> {
+            LocalDate toDate = toDateChooser.getDate() == null ? null : toDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate fromDate = fromDateChooser.getDate() == null ? null : fromDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            vm.getCosts(toDate, fromDate);
+        });
+
+        showAllButton.addActionListener(e -> {
+            toDateChooser.setDate(null);
+            fromDateChooser.setDate(null);
+            vm.getCosts(null, null);
+        });
     }
 
     void buildAddCostScreen() {
@@ -495,7 +520,7 @@ public class View implements IView {
 
         vm.getCurrencies();
         vm.getCategories();
-        vm.getCosts();
+        vm.getCosts(null, null);
     }
 
     void removeItemsFromModel() {
@@ -513,8 +538,19 @@ public class View implements IView {
         costsList.add(datesFilterPanel);
 
         if (costs.size() == 0) {
-            JLabel emptyMessage = generateLabel("Empty List", 70, 30);
-            costsList.add(emptyMessage);
+            //JLabel emptyMessage = generateLabel("Empty List", 70, 30);
+            JTextArea emptyMessage = new JTextArea("Empty List");
+            emptyMessage.setLayout(new FlowLayout(FlowLayout.LEADING));
+            emptyMessage.setBackground(Color.WHITE);
+            emptyMessage.setPreferredSize(new Dimension(700, 60));
+            emptyMessage.setBorder(new EmptyBorder(20, 20, 10, 10));
+
+            JPanel emptyPanel = new JPanel();
+            emptyPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+            emptyPanel.add(emptyMessage);
+            emptyPanel.setBackground(Color.WHITE);
+
+            costsList.add(emptyPanel);
         }
 
         for (var cost : costs) {
@@ -525,17 +561,17 @@ public class View implements IView {
             stringBuffer.append(" ");
             stringBuffer.append(cost.getCurrencyId());
             stringBuffer.append("\t");
-            stringBuffer.append(normalizeLength(cost.getDescription(), 80));
+            stringBuffer.append(normalizeLength(cost.getDescription(), 95));
 
             JTextArea costArea = new JTextArea();
             costArea.setLayout(new FlowLayout(FlowLayout.LEADING));
             costArea.setBackground(Color.decode("#F3F1F1"));
-            costArea.setPreferredSize(new Dimension(640, 60));
+            costArea.setPreferredSize(new Dimension(700, 60));
             costArea.setBorder(new EmptyBorder(20, 20, 10, 10));
             costArea.setText(stringBuffer.toString());
 
             JTextArea datePanel = new JTextArea(cost.getCreationDate());
-            datePanel.setPreferredSize(new Dimension(160, 60));
+            datePanel.setPreferredSize(new Dimension(100, 60));
             datePanel.setBackground(Color.decode("#F3F1F1"));
             datePanel.setBorder(new EmptyBorder(20, 10, 10, 10));
 
@@ -609,6 +645,11 @@ public class View implements IView {
     @Override
     public void setUsers(List<User> users) {
 
+    }
+
+    @Override
+    public void setCostsSize(int size, int filteredSize) {
+        costsSize.setText(filteredSize + "/" + size);
     }
 
     @Override

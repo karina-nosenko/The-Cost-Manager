@@ -12,6 +12,13 @@ import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.Cost;
 import il.ac.shenkar.costmanager.entities.Currency;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -78,25 +85,34 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
-    public void getCosts() {
+    public void getCosts(LocalDate from, LocalDate to) {
         service.submit(() -> {
             List<Cost> costs;
+            List<Cost> filteredCosts = new LinkedList<>();
             try {
                 costs = costModel.getByUserId("91966493-d06c-4593-bdb2-0fb1a084b6f8");
                 for (var cost : costs) {
-                    // replace categoryId by category name
-                    Category category = categoryModel.getById(cost.getCategoryId());
-                    cost.setCategoryId(category.getName());
+                    String creationDateString = cost.getCreationDate();
+                    LocalDate creationDate = LocalDate.parse(creationDateString);
 
-                    // replace currencyId by currency name
-                    Currency currency = currencyModel.getById(cost.getCurrencyId());
-                    cost.setCurrencyId(currency.getName());
+                    if (from == null || to == null || creationDate.equals(from) || creationDate.equals(to) || (creationDate.isAfter(from) && creationDate.isBefore(to))) {
+                        // replace categoryId by category name
+                        Category category = categoryModel.getById(cost.getCategoryId());
+                        cost.setCategoryId(category.getName());
+
+                        // replace currencyId by currency name
+                        Currency currency = currencyModel.getById(cost.getCurrencyId());
+                        cost.setCurrencyId(currency.getName());
+
+                        filteredCosts.add(cost);
+                    }
                 }
             } catch (CostManagerException e) {
                 throw new RuntimeException(e);
             }
 
-            view.setCosts(costs);
+            view.setCostsSize(costs.size(), filteredCosts.size());
+            view.setCosts(filteredCosts);
         });
     }
 
@@ -126,7 +142,7 @@ public class ViewModel implements IViewModel {
                 throw new RuntimeException(e);
             }
 
-            getCosts();
+            getCosts(null, null);
         });
     }
 

@@ -1,6 +1,6 @@
 package il.ac.shenkar.costmanager.entities;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 import static java.util.UUID.randomUUID;
 
@@ -32,11 +32,10 @@ public class Cost {
         }
 
         if (creationDate == null || creationDate.isBlank()) {
-            setCreationDate((new Timestamp(System.currentTimeMillis()).toString()));
-        } else {
-            setCreationDate(creationDate);
+            creationDate = LocalDate.now().toString();
         }
 
+        setCreationDate(creationDate);
         setCategoryId(categoryId);
         setUserId(userId);
         setSum(sum);
