@@ -113,8 +113,9 @@ public class CurrencyModel implements IModel<Currency> {
             statement.setString(2, obj.getName());
             statement.setDouble(3, obj.getRate());
 
-            statement.addBatch();
-            statement.executeBatch();
+            if (statement.executeUpdate() < 0) {
+                throw new CostManagerException("Error while adding the currency");
+            }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }
@@ -135,7 +136,9 @@ public class CurrencyModel implements IModel<Currency> {
             statement = connection.prepareStatement("DELETE FROM currencies WHERE currencyId = ? ");
             statement.setString(1, id);
 
-            statement.executeUpdate();
+            if (statement.executeUpdate() < 0) {
+                throw new CostManagerException("Error while deleting the currency");
+            }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }

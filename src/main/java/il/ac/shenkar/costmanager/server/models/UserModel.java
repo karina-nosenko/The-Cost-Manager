@@ -116,8 +116,9 @@ public class UserModel implements IModel<User> {
             statement.setString(3, obj.getEmail());
             statement.setString(4, obj.getPassword());
 
-            statement.addBatch();
-            statement.executeBatch();
+            if (statement.executeUpdate() < 0) {
+                throw new CostManagerException("Error while adding the user");
+            }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }
@@ -138,7 +139,9 @@ public class UserModel implements IModel<User> {
             statement = connection.prepareStatement("DELETE FROM users WHERE userId = ? ");
             statement.setString(1, id);
 
-            statement.executeUpdate();
+            if (statement.executeUpdate() < 0) {
+                throw new CostManagerException("Error while deleting the user");
+            }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }

@@ -169,8 +169,9 @@ public class CostModel implements IModel<Cost> {
             statement.setString(6, obj.getDescription());
             statement.setString(7, obj.getCreationDate());
 
-            statement.addBatch();
-            statement.executeBatch();
+            if (statement.executeUpdate() < 0) {
+                throw new CostManagerException("Error while adding the cost");
+            }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }
@@ -191,7 +192,9 @@ public class CostModel implements IModel<Cost> {
             statement = connection.prepareStatement("DELETE FROM costs WHERE costId = ? ");
             statement.setString(1, id);
 
-            statement.executeUpdate();
+            if (statement.executeUpdate() < 0) {
+                throw new CostManagerException("Error while deleting the cost");
+            }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }

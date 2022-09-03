@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import il.ac.shenkar.costmanager.CostManagerException;
 import il.ac.shenkar.costmanager.entities.Category;
-import il.ac.shenkar.costmanager.entities.Currency;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,7 +12,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 

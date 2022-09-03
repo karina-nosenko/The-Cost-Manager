@@ -145,8 +145,9 @@ public class CategoryModel implements IModel<Category> {
             statement.setString(2, obj.getUserId());
             statement.setString(3, obj.getName());
 
-            statement.addBatch();
-            statement.executeBatch();
+            if (statement.executeUpdate() < 0) {
+                throw new CostManagerException("Error while adding the category");
+            }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }
@@ -167,7 +168,9 @@ public class CategoryModel implements IModel<Category> {
             statement = connection.prepareStatement("DELETE FROM categories WHERE categoryId = ? ");
             statement.setString(1, id);
 
-            statement.executeUpdate();
+            if (statement.executeUpdate() < 0) {
+                throw new CostManagerException("Error while deleting the category");
+            }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }
