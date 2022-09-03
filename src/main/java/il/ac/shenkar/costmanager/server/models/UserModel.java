@@ -1,6 +1,7 @@
 package il.ac.shenkar.costmanager.server.models;
 
 import il.ac.shenkar.costmanager.CostManagerException;
+import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.User;
 
 import java.sql.*;
@@ -98,6 +99,14 @@ public class UserModel implements IModel<User> {
 
             // add the new user
             add(user);
+
+            // add the default categories to the user
+            CategoryModel categoryModel = new CategoryModel();
+            String[] defaultCategories = { "Leisure", "Health", "Groceries", "Purchases", "Transport" };
+            for (String categoryName : defaultCategories) {
+                Category category = new Category(null, user.getUserId(), categoryName);
+                categoryModel.add(category);
+            }
         } catch (SQLException e) {
             throw new CostManagerException(e.getMessage());
         }

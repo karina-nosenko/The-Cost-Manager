@@ -118,6 +118,8 @@ public class View implements IView {
         });
 
         buttonLogout.addActionListener(e -> {
+            vm.logout();
+
             cards.show(screen, "Login");
             topPanels.show(panelTop, "TopLogup");
             rightPanels.show(panelRight, "RightUnauthorized");
@@ -293,7 +295,7 @@ public class View implements IView {
             String description = descriptionArea.getText().isEmpty() || descriptionArea.getText().isBlank() ? "" : descriptionArea.getText();
             Cost cost = new Cost(
                     null,
-                    "91966493-d06c-4593-bdb2-0fb1a084b6f8",
+                    vm.getAuthorizedUserId(),
                     category.getCategoryId(),
                     Double.parseDouble(sum),
                     currency.getCurrencyId(),
@@ -360,7 +362,7 @@ public class View implements IView {
             }
 
             // add the new category
-            Category category = new Category(null, "91966493-d06c-4593-bdb2-0fb1a084b6f8", newCategoryName);
+            Category category = new Category(null, vm.getAuthorizedUserId(), newCategoryName);
             vm.addCategory(category);
 
             // clear the fields
@@ -625,16 +627,6 @@ public class View implements IView {
     }
 
     @Override
-    public void logupUser() {
-
-        cards.show(screen, "MyCosts");
-        topPanels.show(panelTop, "TopLogout");
-        rightPanels.show(panelRight, "RightAuthorized");
-
-        addItemsFromModel();
-    }
-
-    @Override
     public void setViewModel(IViewModel ob) {
         vm = ob;
     }
@@ -652,7 +644,9 @@ public class View implements IView {
 
         categoriesList.setText(stringBuffer.toString());
 
-        categoriesBox.setSelectedIndex(0);
+        if (categories.size() > 0) {
+            categoriesBox.setSelectedIndex(0);
+        }
     }
 
     @Override

@@ -12,8 +12,10 @@ import java.time.LocalDate;
 
 public interface IViewModel {
 
+    public String getAuthorizedUserId();
     public void loginUser(String email, String password);
     public void logupUser(String username, String email, String password);
+    public void logout();
     public void getCurrencies();
     public void getCategories();
     public void getCosts(LocalDate from, LocalDate to);

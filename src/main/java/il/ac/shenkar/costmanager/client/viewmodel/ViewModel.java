@@ -27,6 +27,7 @@ public class ViewModel implements IViewModel {
     private CurrencyModel currencyModel;
     private CostModel costModel;
     private CategoryModel categoryModel;
+    private String authorizedUserId = null;
 
     public ViewModel() {
         service = Executors.newFixedThreadPool(8);
@@ -53,18 +54,21 @@ public class ViewModel implements IViewModel {
     }
 
     @Override
+    public String getAuthorizedUserId() { return authorizedUserId; }
+
+    @Override
     public void loginUser(String email, String password) {
         final User[] user = new User[1];
         service.submit(() -> {
             try {
                 user[0] = userModel.login(email, password);
-
                 if (user[0] == null) {
                     SwingUtilities.invokeLater(() -> {
                         view.displayMessage("Invalid email or password", JOptionPane.ERROR_MESSAGE);
                     });
                 } else {
                     SwingUtilities.invokeLater(() -> {
+                        authorizedUserId = user[0].getUserId();
                         view.loginUser();
                     });
                 }
@@ -81,15 +85,18 @@ public class ViewModel implements IViewModel {
         service.submit(() -> {
             try {
                 userModel.logup(username, email, password);
-                SwingUtilities.invokeLater(() -> {
-                    view.logupUser();
-                });
+                loginUser(email, password);
             } catch (CostManagerException e) {
                 SwingUtilities.invokeLater(() -> {
                     view.displayMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
                 });
             }
         });
+    }
+
+    @Override
+    public void logout() {
+        authorizedUserId = null;
     }
 
     @Override
@@ -114,7 +121,7 @@ public class ViewModel implements IViewModel {
     public void getCategories() {
         service.submit(() -> {
             try {
-                List<Category> categories = categoryModel.getByUserId("91966493-d06c-4593-bdb2-0fb1a084b6f8");
+                List<Category> categories = categoryModel.getByUserId(authorizedUserId);
 
                 List<Category> viewCategories = categories;
                 SwingUtilities.invokeLater(() -> {
@@ -135,7 +142,7 @@ public class ViewModel implements IViewModel {
         service.submit(() -> {
             List<Cost> filteredCosts = new LinkedList<>();
             try {
-                List<Cost> costs = costModel.getByUserId("91966493-d06c-4593-bdb2-0fb1a084b6f8");
+                List<Cost> costs = costModel.getByUserId(authorizedUserId);
                 for (var cost : costs) {
                     String creationDateString = cost.getCreationDate();
                     LocalDate creationDate = LocalDate.parse(creationDateString);
