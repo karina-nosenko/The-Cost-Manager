@@ -10,6 +10,10 @@ import il.ac.shenkar.costmanager.entities.Cost;
 
 import java.time.LocalDate;
 
+/**
+ * Interface of the viewmodel.
+ * Connects between view and model.
+ */
 public interface IViewModel {
 
     public String getAuthorizedUserId();

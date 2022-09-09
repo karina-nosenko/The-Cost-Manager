@@ -30,6 +30,9 @@ public class View implements IView {
     JPanel costsList, datesFilterPanel;
     JLabel emptyCostsMessage, costsSize;
 
+    /**
+     * Constructor. Initializes global components.
+     */
     public View() {
 
         // initializing layout
@@ -62,6 +65,9 @@ public class View implements IView {
         buttonLogout = new JButton("Logout");
     }
 
+    /**
+     * Build the top panel
+     */
     void buildTopPanel() {
 
         // setting top buttons for each screen
@@ -128,6 +134,9 @@ public class View implements IView {
         });
     }
 
+    /**
+     * Build the right panel (menu)
+     */
     void buildRightPanel() {
 
         // setting right buttons
@@ -161,6 +170,9 @@ public class View implements IView {
         buttonAddCategory.addActionListener(e -> cards.show(screen, "AddCategory"));
     }
 
+    /**
+     * Build the content of the "My Costs" screen
+     */
     void buildMyCostsScreen() {
 
         // build the date picker
@@ -224,6 +236,9 @@ public class View implements IView {
         });
     }
 
+    /**
+     * Build the content of the "Add Cost" screen
+     */
     void buildAddCostScreen() {
 
         // building categories input
@@ -315,6 +330,9 @@ public class View implements IView {
         });
     }
 
+    /**
+     * Build the content of the "Add Category" screen
+     */
     void buildAddCategoryScreen() {
 
         // building name input
@@ -371,6 +389,9 @@ public class View implements IView {
         });
     }
 
+    /**
+     * Build the content of the "Login" screen
+     */
     void buildLoginScreen() {
 
         // building email input
@@ -421,6 +442,9 @@ public class View implements IView {
         });
     }
 
+    /**
+     * Build the content of the "Logup" screen
+     */
     void buildLogupScreen() {
 
         // building username input
@@ -463,7 +487,7 @@ public class View implements IView {
         // building the login screen
         screenLogup.setBackground(Color.WHITE);
         screenLogup.setBorder(new EmptyBorder(30, 60, 30, 60));
-        screenLogup.add(generateHeading("Login"), BorderLayout.PAGE_START);
+        screenLogup.add(generateHeading("Logup"), BorderLayout.PAGE_START);
         screenLogup.add(logupForm, BorderLayout.CENTER);
 
         // handling events
@@ -612,12 +636,20 @@ public class View implements IView {
         return text;
     }
 
+    /**
+     * Display message dialog
+     * @param message
+     * @param option - JOptionPane type
+     */
     @Override
     public void displayMessage(String message, int option) {
 
         JOptionPane.showMessageDialog(frame, message, "Cost Manager", option);
     }
 
+    /**
+     * Change the panels to the authorized view, add items from the db
+     */
     @Override
     public void loginUser() {
         cards.show(screen, "MyCosts");
@@ -627,14 +659,23 @@ public class View implements IView {
         addItemsFromModel();
     }
 
+    /**
+     * Set the viewmodel object
+     * @param ob - viewmodel object
+     */
     @Override
     public void setViewModel(IViewModel ob) {
         vm = ob;
     }
 
+    /**
+     * Build the categories box
+     * @param categories
+     */
     @Override
     public void setCategories(List<Category> categories) {
 
+        // build the categories box in the Add Category form
         StringBuffer stringBuffer = new StringBuffer();
         for (var category : categories) {
             stringBuffer.append(category.getName());
@@ -650,6 +691,10 @@ public class View implements IView {
         }
     }
 
+    /**
+     * Generate costs list
+     * @param costs
+     */
     @Override
     public void setCosts(List<Cost> costs) {
 
@@ -662,9 +707,14 @@ public class View implements IView {
         }
     }
 
+    /**
+     * Build the currencies box
+     * @param currenciesList
+     */
     @Override
     public void setCurrencies(List<Currency> currenciesList) {
 
+        // build the currencies box in the Add Category form
         for (var currency : currenciesList) {
             currenciesBox.addItem(currency);
         }
@@ -672,16 +722,19 @@ public class View implements IView {
         currenciesBox.setSelectedIndex(0);
     }
 
-    @Override
-    public void setUsers(List<User> users) {
-
-    }
-
+    /**
+     * Display the number of displayed (filtered) costs out of the total number of costs
+     * @param size
+     * @param filteredSize
+     */
     @Override
     public void setCostsSize(int size, int filteredSize) {
         costsSize.setText(filteredSize + "/" + size);
     }
 
+    /**
+     * Display the program window
+     */
     @Override
     public void start() {
 

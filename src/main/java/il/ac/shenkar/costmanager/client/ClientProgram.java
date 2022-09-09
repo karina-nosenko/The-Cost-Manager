@@ -11,15 +11,20 @@ import il.ac.shenkar.costmanager.client.viewmodel.ViewModel;
 
 import javax.swing.*;
 
+/**
+ * Class that runs the client program
+ */
 public class ClientProgram {
     public static void main(String[] args) {
 
+        // initialize the models and the viewmodel
         UserModel userModel = new UserModel();
         CurrencyModel currencyModel = new CurrencyModel();
         CostModel costModel = new CostModel();
         CategoryModel categoryModel = new CategoryModel();
         IViewModel vm = new ViewModel();
 
+        // set the view members and start the Swing application
         SwingUtilities.invokeLater(() -> {
             IView view = new View();
             view.start();
