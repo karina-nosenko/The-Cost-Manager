@@ -1,8 +1,7 @@
-package il.ac.shenkar.costmanager.client.models;
+package il.ac.shenkar.costmanager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import il.ac.shenkar.costmanager.CostManagerException;
 import il.ac.shenkar.costmanager.entities.Cost;
 import org.json.JSONArray;
 import org.json.JSONObject;

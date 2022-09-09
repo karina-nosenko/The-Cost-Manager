@@ -69,4 +69,14 @@ public class User {
                 ", password=" + password +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        User user = (User)obj;
+        return user.getUserId().equals(userId) &&
+                user.getUsername().equals(username) &&
+                user.getEmail().equals(email) &&
+                user.getPassword().equals(password);
+    }
 }

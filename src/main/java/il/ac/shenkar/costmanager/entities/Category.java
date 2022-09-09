@@ -51,4 +51,13 @@ public class Category {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        Category category = (Category)obj;
+        return category.getUserId().equals(userId) &&
+                category.getUserId().equals(userId) &&
+                category.getName().equals(name);
+    }
 }

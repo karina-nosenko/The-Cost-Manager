@@ -53,4 +53,13 @@ public class Currency {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        Currency currency = (Currency)obj;
+        return currency.getCurrencyId().equals(currencyId) &&
+                currency.getName().equals(name) &&
+                currency.getRate() == rate;
+    }
 }

@@ -109,4 +109,17 @@ public class Cost {
                 ", creationDate=" + creationDate +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        Cost cost = (Cost)obj;
+        return cost.getCostId().equals(costId) &&
+                cost.getUserId().equals(userId) &&
+                cost.getCategoryId().equals(categoryId) &&
+                cost.getSum() == sum &&
+                cost.getCurrencyId().equals(currencyId) &&
+                cost.getDescription().equals(description) &&
+                cost.getCreationDate().equals(creationDate);
+    }
 }
