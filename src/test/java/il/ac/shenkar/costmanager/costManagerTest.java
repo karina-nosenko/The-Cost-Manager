@@ -1,5 +1,9 @@
 package il.ac.shenkar.costmanager;
 
+import il.ac.shenkar.costmanager.client.models.CategoryModel;
+import il.ac.shenkar.costmanager.client.models.CostModel;
+import il.ac.shenkar.costmanager.client.models.CurrencyModel;
+import il.ac.shenkar.costmanager.client.models.UserModel;
 import il.ac.shenkar.costmanager.entities.Category;
 import il.ac.shenkar.costmanager.entities.Cost;
 import il.ac.shenkar.costmanager.entities.Currency;

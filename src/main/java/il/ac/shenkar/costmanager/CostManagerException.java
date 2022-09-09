@@ -1,5 +1,8 @@
 package il.ac.shenkar.costmanager;
 
+/**
+ * Class of the Cost Manager exception
+ */
 public class CostManagerException extends Exception {
 
     public CostManagerException(String message) {

@@ -4,6 +4,10 @@ import il.ac.shenkar.costmanager.CostManagerException;
 
 import java.util.List;
 
+/**
+ * Interface of the server models
+ * @param <T> - one of the entities
+ */
 public interface IModel<T> {
 
     static String driver = "com.mysql.jdbc.Driver";

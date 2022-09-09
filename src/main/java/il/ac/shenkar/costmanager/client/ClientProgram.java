@@ -1,9 +1,9 @@
 package il.ac.shenkar.costmanager.client;
 
-import il.ac.shenkar.costmanager.CategoryModel;
-import il.ac.shenkar.costmanager.CostModel;
-import il.ac.shenkar.costmanager.CurrencyModel;
-import il.ac.shenkar.costmanager.UserModel;
+import il.ac.shenkar.costmanager.client.models.CategoryModel;
+import il.ac.shenkar.costmanager.client.models.CostModel;
+import il.ac.shenkar.costmanager.client.models.CurrencyModel;
+import il.ac.shenkar.costmanager.client.models.UserModel;
 import il.ac.shenkar.costmanager.client.view.IView;
 import il.ac.shenkar.costmanager.client.view.View;
 import il.ac.shenkar.costmanager.client.viewmodel.IViewModel;

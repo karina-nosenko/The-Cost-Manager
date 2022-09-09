@@ -1,9 +1,13 @@
-package il.ac.shenkar.costmanager;
+package il.ac.shenkar.costmanager.client.models;
 
 import il.ac.shenkar.costmanager.CostManagerException;
 
 import java.util.List;
 
+/**
+ * Interface of the client models
+ * @param <T> - one of the entities
+ */
 public interface IModel<T> {
 
     final static String api_url = "http://localhost:8080";

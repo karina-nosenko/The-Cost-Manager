@@ -7,9 +7,15 @@ import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class that enables CRUD actions with the cost entity.
+ * Communicates with the MySql database
+ */
 public class CostModel implements IModel<Cost> {
 
     private static void closeConnections(Connection connection, ResultSet rs, PreparedStatement statement) throws CostManagerException {
+
+        // close connection
         if(connection!=null) {
             try {
                 connection.close();
@@ -17,6 +23,8 @@ public class CostModel implements IModel<Cost> {
                 throw new CostManagerException(e.getMessage());
             }
         }
+
+        // close result set
         if(rs!=null) {
             try {
                 rs.close();
@@ -24,6 +32,8 @@ public class CostModel implements IModel<Cost> {
                 throw new CostManagerException(e.getMessage());
             }
         }
+
+        // close prepared statement
         if(statement!=null) {
             try {
                 statement.close();
@@ -33,7 +43,13 @@ public class CostModel implements IModel<Cost> {
         }
     }
 
+    /**
+     * Constructor
+     * @throws CostManagerException
+     */
     public CostModel() throws CostManagerException {
+
+        // initialize driver class
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
@@ -41,6 +57,12 @@ public class CostModel implements IModel<Cost> {
         }
     }
 
+    /**
+     * Get all the costs of the given user
+     * @param userId
+     * @return costs list with the given userId
+     * @throws CostManagerException
+     */
     public List<Cost> getByUserId(String userId) throws CostManagerException {
 
         Connection connection = null;
@@ -49,14 +71,13 @@ public class CostModel implements IModel<Cost> {
         List<Cost> resultList = new LinkedList<>();
 
         try {
+            // get the costs list
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
             statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE userId = ? ORDER BY creationDate");
-
             statement.setString(1, userId);
-
             rs = statement.executeQuery();
 
+            // handle the response
             while(rs.next())
             {
                 resultList.add(new Cost(
@@ -77,6 +98,12 @@ public class CostModel implements IModel<Cost> {
 
         return resultList;
     }
+
+    /**
+     * Get all costs
+     * @return costs list
+     * @throws CostManagerException
+     */
     @Override
     public List<Cost> getAll() throws CostManagerException {
 
@@ -86,12 +113,12 @@ public class CostModel implements IModel<Cost> {
         List<Cost> resultList = new LinkedList<>();
 
         try {
+            // get the costs list
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
             statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs");
-
             rs = statement.executeQuery();
 
+            // handle the response
             while(rs.next())
             {
                 resultList.add(new Cost(
@@ -113,6 +140,12 @@ public class CostModel implements IModel<Cost> {
         return resultList;
     }
 
+    /**
+     * Get cost by costId
+     * @param id
+     * @return cost with the given costId
+     * @throws CostManagerException
+     */
     @Override
     public Cost getById(String id) throws CostManagerException {
         Connection connection = null;
@@ -121,14 +154,13 @@ public class CostModel implements IModel<Cost> {
         List<Cost> resultList = new LinkedList<>();
 
         try {
+            // get the cost
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
             statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE costId = ? ORDER BY creationDate");
-
             statement.setString(1, id);
-
             rs = statement.executeQuery();
 
+            // handle response
             while(rs.next())
             {
                 resultList.add(new Cost(
@@ -150,6 +182,11 @@ public class CostModel implements IModel<Cost> {
         return resultList.size() > 0 ? resultList.get(0) : new Cost();
     }
 
+    /**
+     * Add new cost
+     * @param obj - cost object
+     * @throws CostManagerException
+     */
     @Override
     public void add(Cost obj) throws CostManagerException {
         Connection connection = null;
@@ -157,10 +194,9 @@ public class CostModel implements IModel<Cost> {
         PreparedStatement statement = null;
 
         try {
+            // add the cost
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
             statement = connection.prepareStatement("INSERT INTO costs VALUES(?, ?, ?, ?, ?, ?, ?)");
-
             statement.setString(1, obj.getCostId());
             statement.setString(2, obj.getUserId());
             statement.setString(3, obj.getCategoryId());
@@ -180,6 +216,11 @@ public class CostModel implements IModel<Cost> {
         }
     }
 
+    /**
+     * Delete a cost with the given costId
+     * @param id
+     * @throws CostManagerException
+     */
     @Override
     public void delete(String id) throws CostManagerException {
 
@@ -187,8 +228,8 @@ public class CostModel implements IModel<Cost> {
         PreparedStatement statement = null;
 
         try {
+            // delete the cost
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
-
             statement = connection.prepareStatement("DELETE FROM costs WHERE costId = ? ");
             statement.setString(1, id);
 

@@ -1,8 +1,9 @@
-package il.ac.shenkar.costmanager;
+package il.ac.shenkar.costmanager.client.models;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import il.ac.shenkar.costmanager.entities.Cost;
+import il.ac.shenkar.costmanager.CostManagerException;
+import il.ac.shenkar.costmanager.entities.Category;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,34 +15,42 @@ import java.net.http.HttpResponse;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CostModel implements IModel<Cost> {
+/**
+ * Class that enables CRUD actions with the category entity.
+ * Communicates with the server category model.
+ */
+public class CategoryModel implements IModel<Category> {
 
-    public List<Cost> getByUserId(String userId) throws CostManagerException {
+    /**
+     * Get all the categories of the given user
+     * @param userId
+     * @return categories list with the given userId
+     * @throws CostManagerException
+     */
+    public List<Category> getByUserId(String userId) throws CostManagerException {
 
+        // build the request
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(api_url + "/costs/users/" + userId))
+                .uri(URI.create(api_url + "/categories/users/" + userId))
                 .GET()
                 .build();
 
-        List<Cost> result = new LinkedList<>();
+        // handle response
+        List<Category> result = new LinkedList<>();
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String stringResponse = response.body();
             JSONArray jsonArray = new JSONArray(stringResponse);
 
             for (int i=0; i< jsonArray.length(); i++) {
-                JSONObject costObj = jsonArray.getJSONObject(i);
-                Cost cost = new Cost(
-                        costObj.getString("costId"),
-                        costObj.getString("userId"),
-                        costObj.getString("categoryId"),
-                        costObj.getDouble("sum"),
-                        costObj.getString("currencyId"),
-                        costObj.getString("description"),
-                        costObj.getString("creationDate")
+                JSONObject categoryObj = jsonArray.getJSONObject(i);
+                Category category = new Category(
+                        categoryObj.getString("categoryId"),
+                        categoryObj.getString("userId"),
+                        categoryObj.getString("name")
                 );
-                result.add(cost);
+                result.add(category);
             }
         } catch (IOException e) {
             throw new CostManagerException(e.getMessage());
@@ -52,33 +61,36 @@ public class CostModel implements IModel<Cost> {
         return result;
     }
 
+    /**
+     * Get all categories
+     * @return categories list
+     * @throws CostManagerException
+     */
     @Override
-    public List<Cost> getAll() throws CostManagerException {
+    public List<Category> getAll() throws CostManagerException {
 
+        // build the request
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(api_url + "/costs"))
+                .uri(URI.create(api_url + "/categories"))
                 .GET()
                 .build();
 
-        List<Cost> result = new LinkedList<>();
+        // handle response
+        List<Category> result = new LinkedList<>();
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String stringResponse = response.body();
             JSONArray jsonArray = new JSONArray(stringResponse);
 
             for (int i=0; i< jsonArray.length(); i++) {
-                JSONObject costObj = jsonArray.getJSONObject(i);
-                Cost cost = new Cost(
-                        costObj.getString("costId"),
-                        costObj.getString("userId"),
-                        costObj.getString("categoryId"),
-                        costObj.getDouble("sum"),
-                        costObj.getString("currencyId"),
-                        costObj.getString("description"),
-                        costObj.getString("creationDate")
+                JSONObject categoryObj = jsonArray.getJSONObject(i);
+                Category category = new Category(
+                        categoryObj.getString("categoryId"),
+                        categoryObj.getString("userId"),
+                        categoryObj.getString("name")
                 );
-                result.add(cost);
+                result.add(category);
             }
         } catch (IOException e) {
             throw new CostManagerException(e.getMessage());
@@ -89,27 +101,32 @@ public class CostModel implements IModel<Cost> {
         return result;
     }
 
+    /**
+     * Get category by categoryId
+     * @param categoryId
+     * @return category with the given categoryId
+     * @throws CostManagerException
+     */
     @Override
-    public Cost getById(String categoryId) throws CostManagerException {
+    public Category getById(String categoryId) throws CostManagerException {
+
+        // build the request
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(api_url + "/costs/" + categoryId))
+                .uri(URI.create(api_url + "/categories/" + categoryId))
                 .GET()
                 .build();
 
-        Cost result;
+        // handle response
+        Category result = new Category();
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String stringResponse = response.body();
-            JSONObject costObj = new JSONObject(stringResponse);
-            result = new Cost(
-                    costObj.getString("costId"),
-                    costObj.getString("userId"),
-                    costObj.getString("categoryId"),
-                    costObj.getDouble("sum"),
-                    costObj.getString("currencyId"),
-                    costObj.getString("description"),
-                    costObj.getString("creationDate")
+            JSONObject categoryObj = new JSONObject(stringResponse);
+            result = new Category(
+                    categoryObj.getString("categoryId"),
+                    categoryObj.getString("userId"),
+                    categoryObj.getString("name")
             );
         } catch (IOException e) {
             throw new CostManagerException(e.getMessage());
@@ -120,9 +137,15 @@ public class CostModel implements IModel<Cost> {
         return result;
     }
 
+    /**
+     * Add new category
+     * @param obj - category object
+     * @throws CostManagerException
+     */
     @Override
-    public void add(Cost obj) throws CostManagerException {
+    public void add(Category obj) throws CostManagerException {
 
+        // build the request
         var objectMapper = new ObjectMapper();
         String requestBody = null;
         try {
@@ -133,12 +156,14 @@ public class CostModel implements IModel<Cost> {
 
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(api_url + "/costs"))
+                .uri(URI.create(api_url + "/categories"))
                 .setHeader("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
+
+        // handle response
         try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
             throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {
@@ -146,14 +171,21 @@ public class CostModel implements IModel<Cost> {
         }
     }
 
-    public void delete(String costId) throws CostManagerException {
+    /**
+     * Delete a category with the given categoryId
+     * @param categoryId
+     * @throws CostManagerException
+     */
+    public void delete(String categoryId) throws CostManagerException {
 
+        // build the request
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(api_url + "/costs/" + costId))
+                .uri(URI.create(api_url + "/categories/" + categoryId))
                 .DELETE()
                 .build();
 
+        // handle response
         try {
             httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
