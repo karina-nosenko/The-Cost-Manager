@@ -176,4 +176,21 @@ public class UserModel implements IModel<User> {
             throw new CostManagerException(e.getMessage());
         }
     }
+
+    public void delete(String userId) throws CostManagerException {
+
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/users/" + userId))
+                .DELETE()
+                .build();
+
+        try {
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new CostManagerException(e.getMessage());
+        } catch (InterruptedException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+    }
 }

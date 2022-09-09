@@ -127,7 +127,24 @@ public class CategoryModel implements IModel<Category> {
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
         try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new CostManagerException(e.getMessage());
+        } catch (InterruptedException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+    }
+
+    public void delete(String categoryId) throws CostManagerException {
+
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/categories/" + categoryId))
+                .DELETE()
+                .build();
+
+        try {
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
             throw new CostManagerException(e.getMessage());
         } catch (InterruptedException e) {

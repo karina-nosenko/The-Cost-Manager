@@ -146,4 +146,21 @@ public class CostModel implements IModel<Cost> {
             throw new CostManagerException(e.getMessage());
         }
     }
+
+    public void delete(String costId) throws CostManagerException {
+
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/costs/" + costId))
+                .DELETE()
+                .build();
+
+        try {
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new CostManagerException(e.getMessage());
+        } catch (InterruptedException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+    }
 }

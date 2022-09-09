@@ -11,4 +11,5 @@ public interface IModel<T> {
     public List<T> getAll() throws CostManagerException;
     public T getById(String id) throws CostManagerException;
     public void add(T obj) throws CostManagerException;
+    void delete(String id) throws CostManagerException;
 }

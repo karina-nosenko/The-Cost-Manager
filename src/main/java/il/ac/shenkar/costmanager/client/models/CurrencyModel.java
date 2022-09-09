@@ -103,4 +103,21 @@ public class CurrencyModel implements IModel<Currency> {
             throw new CostManagerException(e.getMessage());
         }
     }
+
+    public void delete(String currencyId) throws CostManagerException {
+
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(api_url + "/currencies/" + currencyId))
+                .DELETE()
+                .build();
+
+        try {
+            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new CostManagerException(e.getMessage());
+        } catch (InterruptedException e) {
+            throw new CostManagerException(e.getMessage());
+        }
+    }
 }

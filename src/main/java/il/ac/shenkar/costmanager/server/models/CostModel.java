@@ -51,7 +51,7 @@ public class CostModel implements IModel<Cost> {
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE userId = ?");
+            statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE userId = ? ORDER BY creationDate");
 
             statement.setString(1, userId);
 
@@ -123,7 +123,7 @@ public class CostModel implements IModel<Cost> {
         try {
             connection = DriverManager.getConnection(connectionString, db_user, db_password);
 
-            statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE costId = ?");
+            statement = connection.prepareStatement("SELECT costId, userId, categoryId, sum, currencyId, description, creationDate FROM costs WHERE costId = ? ORDER BY creationDate");
 
             statement.setString(1, id);
 

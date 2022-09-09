@@ -550,7 +550,6 @@ public class View implements IView {
         costsList.add(datesFilterPanel);
 
         if (costs.size() == 0) {
-            //JLabel emptyMessage = generateLabel("Empty List", 70, 30);
             JTextArea emptyMessage = new JTextArea("Empty List");
             emptyMessage.setLayout(new FlowLayout(FlowLayout.LEADING));
             emptyMessage.setBackground(Color.WHITE);
@@ -573,7 +572,9 @@ public class View implements IView {
             stringBuffer.append(" ");
             stringBuffer.append(cost.getCurrencyId());
             stringBuffer.append("\t");
-            stringBuffer.append(normalizeLength(cost.getDescription(), 95));
+
+            String description = cost.getDescription().isEmpty() || cost.getDescription().isBlank() ? "-" : cost.getDescription();
+            stringBuffer.append(normalizeLength(description, 95));
 
             JTextArea costArea = new JTextArea();
             costArea.setLayout(new FlowLayout(FlowLayout.LEADING));
